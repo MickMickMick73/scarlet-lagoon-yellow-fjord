@@ -1,11 +1,15 @@
 import {
   BUILDINGS,
+  CITIES,
   CONTRACT,
   GOODS,
+  MAIL,
   MODULES,
   PLANETS,
   PORTRAITS,
   SYSTEMS,
+  type BuildingId,
+  type CityId,
 } from "@/data/catalog";
 
 export type NighthaulConfig = {
@@ -13,17 +17,23 @@ export type NighthaulConfig = {
   name: string;
 };
 
+export type GameMode = "city" | "interior" | "ship" | "planet" | "space" | "mine";
+
 export type GameState = {
-  mode: "city" | "ship" | "space" | "mine";
+  mode: GameMode;
   planet: (typeof PLANETS)[number]["id"];
+  city: CityId;
+  interior: BuildingId | null;
   name: string;
   portrait: string;
   credits: number;
   bank: number;
   hp: number;
   maxHp: number;
+  rest: number;
+  nourish: number;
   cargo: Record<string, number>;
-  warehouse: Record<string, number>;
+  stores: Record<string, Record<string, number>>;
   systems: Record<string, number>;
   modules: string[];
   delivered: Record<string, number>;
@@ -32,6 +42,8 @@ export type GameState = {
   fuel: number;
   heading: number;
   speed: number;
+  mail: string[];
+  cryoTaken: Record<string, boolean>;
 };
 
 export type GameApi = {
@@ -44,8 +56,13 @@ export type GameApi = {
   deposit: (n: number) => string;
   withdraw: (n: number) => string;
   sleep: () => string;
+  heal: () => string;
+  eat: (id: string) => string;
   deliver: () => string;
+  store: (id: string) => string;
+  retrieve: (id: string) => string;
   warp: (systemId: string) => string;
+  takeCryo: () => string;
 };
 
 type MountOpts = {
@@ -68,24 +85,52 @@ const loadImage = (src: string) =>
 const clamp = (n: number, a: number, b: number) => Math.max(a, Math.min(b, n));
 const wrap = (a: number) => Math.atan2(Math.sin(a), Math.cos(a));
 
-const CITY_W = 3400;
 const GROUND = 560;
 const MINE_T = 36;
 const MINE_C = 56;
 const MINE_R = 32;
+const PLANET_W = 5200;
+const SAVE_KEY = "nighthaul-v2";
 
-const LAYOUT = [
-  { id: "parts", x: 560 },
-  { id: "bar", x: 920 },
-  { id: "bank", x: 1260 },
-  { id: "exchange", x: 1620 },
-  { id: "warehouse", x: 1980 },
-  { id: "hotel", x: 2320 },
-  { id: "guns", x: 2660 },
-] as const;
+type Spot =
+  | { kind: "ship"; x: number }
+  | { kind: "gate"; x: number }
+  | { kind: "mine"; x: number }
+  | { kind: "building"; id: BuildingId; x: number };
+
+function layoutFor(city: (typeof CITIES)[number]): { spots: Spot[]; width: number } {
+  const spots: Spot[] = [];
+  let x = 260;
+  if (city.starport) {
+    spots.push({ kind: "ship", x: 220 });
+    x = 560;
+  } else {
+    spots.push({ kind: "gate", x: 180 });
+    x = 500;
+  }
+  for (const b of city.buildings) {
+    spots.push({ kind: "building", id: b, x });
+    x += 400;
+  }
+  if (city.starport) spots.push({ kind: "gate", x: x + 20 });
+  if (city.id === "lowwatt" || city.id === "heap" || city.id === "frostshed") {
+    spots.push({ kind: "mine", x: x + 260 });
+    x += 260;
+  }
+  return { spots, width: Math.max(2200, x + 380) };
+}
+
+function citiesOn(planet: string) {
+  return CITIES.filter((c) => c.planet === planet);
+}
+
+function planetX(cityId: string, planet: string) {
+  const list = citiesOn(planet);
+  const i = list.findIndex((c) => c.id === cityId);
+  return 720 + Math.max(0, i) * 1600;
+}
 
 type Body = { x: number; y: number; hp: number; facing: 0 | 1 | 2 | 3; frame: number; hurt: number };
-
 type Shot = { x: number; y: number; vx: number; vy: number; life: number; from: "player" | "foe" };
 
 function cargoCount(c: Record<string, number>) {
@@ -94,6 +139,10 @@ function cargoCount(c: Record<string, number>) {
 
 function priceOf(planet: (typeof PLANETS)[number], id: string) {
   return (planet.prices as Record<string, number>)[id] ?? 20;
+}
+
+function cityById(id: string) {
+  return CITIES.find((c) => c.id === id) ?? CITIES[0];
 }
 
 export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts): Promise<GameApi> {
@@ -106,31 +155,48 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
   const st: GameState = {
     mode: "city",
     planet: "kessler",
+    city: "rainspire",
+    interior: null,
     name: opts.config.name,
     portrait: portrait.id,
     credits: 420,
     bank: 0,
     hp: maxHp,
     maxHp,
+    rest: 82,
+    nourish: 70,
     cargo: {},
-    warehouse: {},
+    stores: {},
     systems: { engine: 55, shields: 40, lasers: 70, hold: 80, warp: 18 },
     modules: ["engine", "lasers"],
-    delivered: { chip: 0, nutrapack: 0, coolant: 0, cryopod: 0 },
+    delivered: { chip: 0, nutrapack: 0, coolant: 0, grain: 0, cryopod: 0 },
     hasPistol: portrait.guns >= 3,
     hasBaton: true,
     fuel: 40,
     heading: -Math.PI / 2,
     speed: 0,
+    mail: ["will", "dockwell"],
+    cryoTaken: {},
   };
+
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (raw) {
+      const saved = JSON.parse(raw) as Partial<GameState>;
+      if (saved && saved.name === st.name) {
+        const { mode: _m, interior: _i, ...rest } = saved;
+        Object.assign(st, rest, { name: st.name, portrait: st.portrait, mode: "city", interior: null });
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+
   const holdCap = () => 8 + (st.modules.includes("hold") ? 8 : 0);
+  const vigor = () => Math.round(Math.min((st.hp / st.maxHp) * 100, st.rest, st.nourish));
 
   const player: Body = { x: 420, y: GROUND + 48, hp: st.hp, facing: 2, frame: 0, hurt: 0 };
-  const muggers: Array<Body & { vx: number }> = [
-    { x: 780, y: GROUND + 48, hp: 4, facing: 1, frame: 0, hurt: 0, vx: -40 },
-    { x: 1480, y: GROUND + 52, hp: 5, facing: 2, frame: 0, hurt: 0, vx: 50 },
-    { x: 2400, y: GROUND + 46, hp: 4, facing: 1, frame: 0, hurt: 0, vx: -30 },
-  ];
+  let muggers: Array<Body & { vx: number }> = [];
   let pirates: Array<{ x: number; y: number; heading: number; hp: number; hurt: number; cd: number }> = [];
   let shots: Shot[] = [];
   let fx: Array<{ x: number; y: number; life: number; kind: "muzzle" | "slash" | "explode" }> = [];
@@ -144,19 +210,46 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
   let minePy = 4;
   let mineVy = 0;
   let onGround = false;
-  const cryoTaken: Record<string, boolean> = {};
   let testSteer: number | null = null;
+  let hint = "";
+  let drain = 0;
+
+  const spawnMuggers = () => {
+    const city = cityById(st.city);
+    const n = city.colony ? 0 : city.id === "heap" || city.id === "dockwell" ? 3 : 2;
+    const lay = layoutFor(city);
+    muggers = Array.from({ length: n }, (_, i) => ({
+      x: 700 + i * 520,
+      y: GROUND + 48,
+      hp: 4 + i,
+      facing: 2 as const,
+      frame: 0,
+      hurt: 0,
+      vx: i % 2 ? 48 : -42,
+    }));
+    if (lay.width) {
+      /* keep in bounds later */
+    }
+  };
+  spawnMuggers();
 
   const keys = new Set<string>();
   const just = new Set<string>();
   const GAME_KEYS = new Set([
-    "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space", "KeyW", "KeyA", "KeyS", "KeyD", "KeyE", "KeyM", "KeyF",
+    "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space", "KeyW", "KeyA", "KeyS", "KeyD", "KeyE", "KeyM", "KeyF", "KeyC",
   ]);
+  let doInteract = () => {};
   const onKey = (e: KeyboardEvent, down: boolean) => {
     if (GAME_KEYS.has(e.code)) e.preventDefault();
     if (down) {
       if (!keys.has(e.code)) just.add(e.code);
       keys.add(e.code);
+      if (e.code === "KeyE" || e.code === "KeyF") doInteract();
+      if (e.code === "KeyM") opts.onMap(true);
+      if (e.code === "KeyC") {
+        opts.onShop("cargo");
+        shopId = "cargo";
+      }
     } else keys.delete(e.code);
   };
   const kd = (e: KeyboardEvent) => onKey(e, true);
@@ -209,34 +302,9 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
 
   const img = (src: string) => loadImage(src);
   const [
-    walk,
-    pistol,
-    melee,
-    mineAnim,
-    muggerImg,
-    merchantImg,
-    bartenderImg,
-    mechanicImg,
-    street,
-    deck,
-    sky,
-    near,
-    spaceBg,
-    shipIn,
-    barIn,
-    haul,
-    pirateImg,
-    fighter,
-    pod,
-    muzzle,
-    slash,
-    laser,
-    explode,
-    dirt,
-    stone,
-    copper,
-    crystal,
-    mineFar,
+    walk, pistol, melee, mineAnim, muggerImg, merchantImg, bartenderImg, mechanicImg,
+    street, deck, sky, near, spaceBg, shipIn, haul, pirateImg, fighter, pod,
+    muzzle, slash, laser, explode, dirt, stone, copper, crystal, mineFar,
   ] = await Promise.all([
     img("/assets/nh/heroes/walk.png"),
     img("/assets/nh/heroes/pistol.png"),
@@ -252,7 +320,6 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
     img("/assets/nh/parallax/kessler-near.jpg"),
     img("/assets/nh/parallax/space.jpg"),
     img("/assets/nh/interiors/ship.jpg"),
-    img("/assets/nh/interiors/bar.jpg"),
     img("/assets/nh/ships/nighthaul.png"),
     img("/assets/nh/ships/pirate.png"),
     img("/assets/nh/ships/fighter.png"),
@@ -270,31 +337,47 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
 
   const farImgs: Record<string, HTMLImageElement | null> = {};
   const bldImgs: Record<string, HTMLImageElement | null> = {};
+  const inImgs: Record<string, HTMLImageElement | null> = {};
   await Promise.all([
     ...PLANETS.map(async (p) => {
       farImgs[p.id] = await img(p.far);
     }),
     ...BUILDINGS.map(async (b) => {
       bldImgs[b.id] = await img(b.src);
+      inImgs[b.id] = await img(`/assets/nh/interiors/${b.id}.jpg`);
     }),
   ]);
 
   const planet = () => PLANETS.find((p) => p.id === st.planet) ?? PLANETS[0];
+  const city = () => cityById(st.city);
+  const persist = () => {
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify(st));
+    } catch {
+      /* ignore */
+    }
+  };
 
   const status = () => {
     const p = planet();
     const need = CONTRACT.need;
-    const left =
-      need.chip - st.delivered.chip + (need.nutrapack - st.delivered.nutrapack) + (need.coolant - st.delivered.coolant) + (need.cryopod - st.delivered.cryopod);
+    const left = (Object.keys(need) as Array<keyof typeof need>).reduce(
+      (n, k) => n + Math.max(0, need[k] - (st.delivered[k] ?? 0)),
+      0,
+    );
     const loc =
       st.mode === "city"
-        ? p.name
-        : st.mode === "ship"
-          ? "Nighthaul hold"
-          : st.mode === "space"
-            ? "Warp lane"
-            : "Undercity";
-    opts.onStatus(`${st.name} · ${loc} · ${st.hp}/${st.maxHp} · ${st.credits}¢ · contract ${Math.max(0, left)} left`);
+        ? city().name
+        : st.mode === "interior"
+          ? `${BUILDINGS.find((b) => b.id === st.interior)?.name ?? "Inside"} · ${city().name}`
+          : st.mode === "ship"
+            ? "Nighthaul"
+            : st.mode === "planet"
+              ? `${p.name} highway`
+              : st.mode === "space"
+                ? "Warp lane"
+                : "Undercity";
+    opts.onStatus(`${st.name} · ${loc} · V${vigor()} · ${st.hp}/${st.maxHp} · ${st.credits}¢ · contract ${Math.max(0, left)} left`);
   };
 
   const addCargo = (id: string, n: number) => {
@@ -325,16 +408,50 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
 
   const enterShip = () => {
     st.mode = "ship";
-    player.x = 420;
+    st.interior = null;
+    player.x = 280;
     player.y = 430;
     opts.onShop(null);
     shopId = null;
     status();
+    persist();
   };
-  const enterCity = (atShip: boolean) => {
+  const enterCity = (id: CityId, at: "ship" | "gate" | "stay") => {
     st.mode = "city";
-    player.x = atShip ? 280 : player.x;
+    st.city = id;
+    st.planet = cityById(id).planet;
+    st.interior = null;
+    const lay = layoutFor(cityById(id));
+    if (at === "ship") {
+      const s = lay.spots.find((x) => x.kind === "ship");
+      player.x = s ? s.x + 80 : 280;
+    } else if (at === "gate") {
+      const g = lay.spots.find((x) => x.kind === "gate");
+      player.x = g ? g.x + 40 : 280;
+    }
     player.y = GROUND + 40;
+    spawnMuggers();
+    opts.onShop(null);
+    shopId = null;
+    status();
+    persist();
+  };
+  const enterInterior = (id: BuildingId) => {
+    st.mode = "interior";
+    st.interior = id;
+    player.x = 180;
+    player.y = GROUND + 20;
+    opts.onShop(null);
+    shopId = null;
+    status();
+  };
+  const enterPlanet = (fromCity: string) => {
+    st.mode = "planet";
+    st.interior = null;
+    player.x = planetX(fromCity, st.planet);
+    player.y = GROUND + 36;
+    opts.onShop(null);
+    shopId = null;
     status();
   };
   const launch = () => {
@@ -354,60 +471,98 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
     ];
     shots = [];
     opts.onShop(null);
+    if (!st.mail.includes("heap")) st.mail.push("heap");
     status();
   };
   const land = () => {
-    st.mode = "city";
-    player.x = 280;
-    player.y = GROUND + 40;
+    const star = citiesOn(st.planet).find((c) => c.starport) ?? citiesOn(st.planet)[0];
     pirates = [];
     shots = [];
     opts.onMap(false);
-    status();
+    enterCity(star.id as CityId, "ship");
+  };
+
+  const nearSpot = (max = 120) => {
+    const lay = layoutFor(city());
+    return lay.spots.find((s) => Math.abs(player.x - s.x) < max) ?? null;
   };
 
   const interact = () => {
     if (interactLock > 0) return;
-    interactLock = 0.25;
+    interactLock = 0.4;
     if (st.mode === "city") {
-      if (Math.abs(player.x - 220) < 90) {
-        enterShip();
-        return;
-      }
-      if (player.x > CITY_W - 280) {
+      const s = nearSpot();
+      if (!s) return;
+      if (s.kind === "ship") enterShip();
+      else if (s.kind === "gate") enterPlanet(st.city);
+      else if (s.kind === "mine") {
         st.mode = "mine";
         carveMine();
         status();
+      } else enterInterior(s.id);
+    } else if (st.mode === "interior") {
+      if (player.x < 160) {
+        const interiorId = st.interior;
+        enterCity(st.city, "stay");
+        const lay = layoutFor(city());
+        const b = lay.spots.find((s) => s.kind === "building" && s.id === interiorId);
+        player.x = b ? b.x : 400;
+        player.y = GROUND + 40;
         return;
       }
-      const nearB = LAYOUT.find((b) => Math.abs(player.x - b.x) < 90);
-      if (nearB) {
-        shopId = nearB.id;
-        opts.onShop(nearB.id);
-        return;
+      if (player.x > 360) {
+        shopId = st.interior;
+        opts.onShop(st.interior);
       }
     } else if (st.mode === "ship") {
-      if (player.x < 260) {
-        enterCity(true);
+      const stations: Array<{ x: number; act: () => void; hint: string }> = [
+        { x: 200, hint: "E  hatch", act: () => {
+          const c = city();
+          if (c.starport) enterCity(st.city, "ship");
+          else enterPlanet(st.city);
+        } },
+        { x: 320, hint: "E  cargo", act: () => { opts.onShop("cargo"); shopId = "cargo"; } },
+        { x: 450, hint: "E  cryo bay", act: () => { opts.onShop("cryo"); shopId = "cryo"; } },
+        { x: 590, hint: "E  pod bay", act: () => enterPlanet(st.city) },
+        { x: 740, hint: "E  helm · launch", act: () => launch() },
+      ];
+      let best = stations[0];
+      let bestD = 9999;
+      for (const s of stations) {
+        const d = Math.abs(player.x - s.x);
+        if (d < bestD) {
+          bestD = d;
+          best = s;
+        }
+      }
+      if (bestD < 110) best.act();
+    } else if (st.mode === "planet") {
+      const list = citiesOn(st.planet);
+      const hit = list.find((c) => Math.abs(player.x - planetX(c.id, st.planet)) < 140);
+      if (hit) {
+        enterCity(hit.id as CityId, "gate");
         return;
       }
-      if (player.x > 620) {
-        launch();
-        return;
+      if (Math.abs(player.x - 1400) < 100 || Math.abs(player.x - 3000) < 100) {
+        st.mode = "mine";
+        carveMine();
+        status();
       }
-      opts.onMap(true);
     } else if (st.mode === "space") {
-      opts.onMap(true);
+      land();
     } else if (st.mode === "mine") {
       if (minePx < 5 && minePy < 8) {
         st.mode = "city";
-        player.x = CITY_W - 260;
+        const lay = layoutFor(city());
+        const m = lay.spots.find((s) => s.kind === "mine");
+        player.x = m ? m.x : lay.width - 260;
         player.y = GROUND + 40;
         mine = null;
         status();
       }
     }
   };
+  doInteract = interact;
 
   const fireFoot = () => {
     if (atkCd > 0) return;
@@ -481,6 +636,72 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
     ctx.restore();
   };
 
+  const drawLimb = (len: number, thick: number, ang: number, color: string) => {
+    ctx.save();
+    ctx.rotate(ang);
+    ctx.fillStyle = color;
+    const r = Math.max(2, thick / 2);
+    ctx.beginPath();
+    ctx.roundRect(-r, 0, thick, len, r);
+    ctx.fill();
+    ctx.restore();
+  };
+
+  const drawWalker = (
+    image: HTMLImageElement | null,
+    facing: 0 | 1 | 2 | 3,
+    frame: number,
+    x: number,
+    y: number,
+    h: number,
+    moving: boolean,
+  ) => {
+    if (!image) return;
+    const side = facing === 1 || facing === 2;
+    const t = frame * Math.PI;
+    const swing = moving ? Math.sin(t) : 0;
+    const bob = moving ? Math.abs(Math.cos(t)) * h * 0.028 : 0;
+    const cw = image.width / 4;
+    const ch = image.height / 4;
+    const w = (cw / ch) * h;
+    ctx.save();
+    ctx.translate(x, y - bob);
+    if (facing === 1) ctx.scale(-1, 1);
+    const row = facing === 1 ? 2 : facing;
+    const coat = "#2a3038";
+    const boot = "#14161c";
+    const hipY = -h * 0.4;
+    const shY = -h * 0.66;
+    const legLen = h * 0.4;
+    const armLen = h * 0.3;
+    const legAng = swing * (side ? 0.55 : 0.28);
+    const armAng = -swing * (side ? 0.7 : 0.4);
+    if (moving) {
+      ctx.save();
+      ctx.translate(side ? -w * 0.04 : -w * 0.12, hipY);
+      drawLimb(legLen, h * 0.075, -legAng, boot);
+      ctx.restore();
+      ctx.save();
+      ctx.translate(side ? -w * 0.08 : -w * 0.16, shY);
+      drawLimb(armLen, h * 0.055, -armAng, coat);
+      ctx.restore();
+      const srcH = ch * 0.58;
+      const dstH = h * 0.58;
+      ctx.drawImage(image, 0, row * ch, cw, srcH, -w / 2, -h, w, dstH);
+      ctx.save();
+      ctx.translate(side ? w * 0.05 : w * 0.12, hipY);
+      drawLimb(legLen, h * 0.08, legAng, boot);
+      ctx.restore();
+      ctx.save();
+      ctx.translate(side ? w * 0.1 : w * 0.16, shY);
+      drawLimb(armLen, h * 0.06, armAng, coat);
+      ctx.restore();
+    } else {
+      ctx.drawImage(image, 0, row * ch, cw, ch, -w / 2, -h, w, h);
+    }
+    ctx.restore();
+  };
+
   const tileFill = (image: HTMLImageElement | null, x: number, y: number, w: number, h: number, s: number) => {
     if (!image) {
       ctx.fillStyle = "#1a222c";
@@ -512,6 +733,48 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
   let dead = false;
   let won = false;
 
+  const walkFoot = (dt: number, mx: number, my: number, xmin: number, xmax: number, ymin: number, ymax: number, spd: number) => {
+    player.x = clamp(player.x + mx * spd * dt, xmin, xmax);
+    player.y = clamp(player.y + my * spd * dt, ymin, ymax);
+    if (Math.abs(mx) > 0.1 || Math.abs(my) > 0.1) {
+      player.facing = Math.abs(mx) > Math.abs(my) ? (mx < 0 ? 1 : 2) : my > 0 ? 0 : 3;
+      player.frame += dt * 11;
+    }
+  };
+
+  const tickMuggers = (dt: number, xmin: number, xmax: number) => {
+    for (const m of muggers) {
+      if (m.hp <= 0) continue;
+      m.hurt = Math.max(0, m.hurt - dt);
+      m.x += m.vx * dt;
+      if (m.x < xmin || m.x > xmax) m.vx *= -1;
+      m.facing = m.vx < 0 ? 1 : 2;
+      m.frame += dt * 6;
+      if (Math.hypot(m.x - player.x, m.y - player.y) < 42 && m.hurt <= 0) {
+        player.hp -= 1;
+        player.hurt = 0.35;
+        m.hurt = 0.6;
+      }
+    }
+    for (const s of shots) {
+      s.x += s.vx * dt;
+      s.y += s.vy * dt;
+      s.life -= dt;
+      for (const m of muggers) {
+        if (m.hp <= 0) continue;
+        if (Math.hypot(m.x - s.x, m.y - 20 - s.y) < 28) {
+          m.hp -= 2 + portrait.guns * 0.5;
+          m.hurt = 0.2;
+          s.life = 0;
+          if (m.hp <= 0) {
+            st.credits += 18 + Math.floor(Math.random() * 12);
+            fx.push({ x: m.x, y: m.y - 20, life: 0.35, kind: "explode" });
+          }
+        }
+      }
+    }
+  };
+
   const tick = (now: number) => {
     raf = requestAnimationFrame(tick);
     const dt = Math.min(0.05, (now - last) / 1000);
@@ -521,62 +784,79 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
     interactLock = Math.max(0, interactLock - dt);
     animT += dt;
     player.hurt = Math.max(0, player.hurt - dt);
-    if (just.has("KeyE")) interact();
+    drain += dt;
+    if (drain > 8) {
+      drain = 0;
+      st.rest = Math.max(0, st.rest - 1);
+      st.nourish = Math.max(0, st.nourish - 1);
+      if (st.rest <= 0 || st.nourish <= 0) player.hp = Math.max(1, player.hp - 1);
+    }
+    if (just.has("KeyE") || just.has("KeyF")) interact();
     if (just.has("KeyM")) opts.onMap(true);
+    if (just.has("KeyC")) {
+      opts.onShop("cargo");
+      shopId = "cargo";
+    }
     just.clear();
 
     const mx = (keys.has("KeyD") || keys.has("ArrowRight") ? 1 : 0) - (keys.has("KeyA") || keys.has("ArrowLeft") ? 1 : 0) + stick.mx;
     const my = (keys.has("KeyS") || keys.has("ArrowDown") ? 1 : 0) - (keys.has("KeyW") || keys.has("ArrowUp") ? 1 : 0) + stick.my;
     const attack = keys.has("Space") || (pointer.down && !stick.active);
+    hint = "";
 
     if (st.mode === "city") {
+      const lay = layoutFor(city());
       const spd = 165 + portrait.luck * 4;
-      player.x = clamp(player.x + mx * spd * dt, 80, CITY_W - 80);
-      player.y = clamp(player.y + my * spd * dt, GROUND + 8, GROUND + 110);
-      if (Math.abs(mx) > 0.1 || Math.abs(my) > 0.1) {
-        player.facing = Math.abs(mx) > Math.abs(my) ? (mx < 0 ? 1 : 2) : my > 0 ? 0 : 3;
-        player.frame += dt * 8;
-      }
+      walkFoot(dt, mx, my, 80, lay.width - 80, GROUND + 8, GROUND + 110, spd);
       if (attack) fireFoot();
-      for (const m of muggers) {
-        if (m.hp <= 0) continue;
-        m.hurt = Math.max(0, m.hurt - dt);
-        m.x += m.vx * dt;
-        if (m.x < 500 || m.x > CITY_W - 400) m.vx *= -1;
-        m.facing = m.vx < 0 ? 1 : 2;
-        m.frame += dt * 6;
-        if (Math.hypot(m.x - player.x, m.y - player.y) < 42 && m.hurt <= 0) {
-          player.hp -= 1;
-          player.hurt = 0.35;
-          m.hurt = 0.6;
-        }
-      }
-      for (const s of shots) {
-        s.x += s.vx * dt;
-        s.y += s.vy * dt;
-        s.life -= dt;
-        for (const m of muggers) {
-          if (m.hp <= 0) continue;
-          if (Math.hypot(m.x - s.x, m.y - 20 - s.y) < 28) {
-            m.hp -= 2 + portrait.guns * 0.5;
-            m.hurt = 0.2;
-            s.life = 0;
-            if (m.hp <= 0) {
-              st.credits += 18 + Math.floor(Math.random() * 12);
-              fx.push({ x: m.x, y: m.y - 20, life: 0.35, kind: "explode" });
-            }
-          }
-        }
-      }
-      cam.x = clamp(player.x - canvas.clientWidth * 0.38, 0, CITY_W - canvas.clientWidth);
+      tickMuggers(dt, 400, lay.width - 300);
+      const s = nearSpot();
+      if (s?.kind === "ship") hint = "E  board Nighthaul";
+      else if (s?.kind === "gate") hint = "E  take the pod";
+      else if (s?.kind === "mine") hint = "E  undercity";
+      else if (s?.kind === "building") hint = `E  ${BUILDINGS.find((b) => b.id === s.id)?.name ?? s.id}`;
+      cam.x = clamp(player.x - canvas.clientWidth * 0.38, 0, Math.max(0, lay.width - canvas.clientWidth));
+      cam.y = 0;
+    } else if (st.mode === "interior") {
+      walkFoot(dt, mx, my, 80, Math.max(720, canvas.clientWidth - 80), GROUND - 40, GROUND + 80, 150);
+      if (player.x < 160) hint = "E  street";
+      else if (player.x > 360) hint = `E  ${BUILDINGS.find((b) => b.id === st.interior)?.name ?? "counter"}`;
+      cam.x = 0;
       cam.y = 0;
     } else if (st.mode === "ship") {
-      const spd = 150;
-      player.x = clamp(player.x + mx * spd * dt, 140, 780);
-      player.y = clamp(player.y + my * spd * dt, 360, 500);
-      if (Math.abs(mx) > 0.1) player.facing = mx < 0 ? 1 : 2;
-      player.frame += dt * 7;
+      walkFoot(dt, mx, my, 140, 860, 360, 500, 150);
+      const marks = [
+        [200, "E  hatch"],
+        [320, "E  cargo"],
+        [450, "E  cryo bay"],
+        [590, "E  pod bay"],
+        [740, "E  helm · launch"],
+      ] as const;
+      let bestH = marks[0][1];
+      let bestD = 9999;
+      for (const [x, h] of marks) {
+        const d = Math.abs(player.x - x);
+        if (d < bestD) {
+          bestD = d;
+          bestH = h;
+        }
+      }
+      if (bestD < 110) hint = bestH;
       cam.x = 0;
+      cam.y = 0;
+    } else if (st.mode === "planet") {
+      const spd = 280;
+      player.x = clamp(player.x + mx * spd * dt, 80, PLANET_W - 80);
+      player.y = GROUND + 36;
+      if (Math.abs(mx) > 0.1) {
+        player.facing = mx < 0 ? 1 : 2;
+        player.frame += dt * 8;
+      }
+      const list = citiesOn(st.planet);
+      const hit = list.find((c) => Math.abs(player.x - planetX(c.id, st.planet)) < 140);
+      if (hit) hint = `E  ${hit.name}`;
+      else if (Math.abs(player.x - 1400) < 100 || Math.abs(player.x - 3000) < 100) hint = "E  mine shaft";
+      cam.x = clamp(player.x - canvas.clientWidth * 0.42, 0, PLANET_W - canvas.clientWidth);
       cam.y = 0;
     } else if (st.mode === "space") {
       let steer = 0;
@@ -597,6 +877,7 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
       player.x += fxx * st.speed * dt;
       player.y += fyy * st.speed * dt;
       if (attack) fireSpace();
+      hint = "E  land starport · M  star chart";
       for (const p of pirates) {
         if (p.hp <= 0) continue;
         p.hurt = Math.max(0, p.hurt - dt);
@@ -686,6 +967,7 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
           }
         }
       }
+      hint = minePx < 5 && minePy < 8 ? "E  ladder" : "S / click dig";
       cam.x = minePx * MINE_T - canvas.clientWidth / 2;
       cam.y = minePy * MINE_T - canvas.clientHeight / 2;
     }
@@ -706,6 +988,7 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
       st.delivered.chip >= need.chip &&
       st.delivered.nutrapack >= need.nutrapack &&
       st.delivered.coolant >= need.coolant &&
+      st.delivered.grain >= need.grain &&
       st.delivered.cryopod >= need.cryopod
     ) {
       won = true;
@@ -751,6 +1034,31 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
     }
   };
 
+  const drawPlayer = (mx: number, attacking: boolean, h = 176) => {
+    const moving = Math.abs(mx) > 0.08;
+    const atkImg = st.hasPistol ? pistol : melee;
+    ctx.globalAlpha = player.hurt > 0 ? 0.6 : 1;
+    ctx.fillStyle = "rgba(0,0,0,0.35)";
+    ctx.beginPath();
+    ctx.ellipse(player.x, player.y - 6, 22, 8, 0, 0, Math.PI * 2);
+    ctx.fill();
+    if (attacking && atkCd > 0.02 && st.mode !== "planet") {
+      drawSheet(atkImg, 2, 2, Math.floor(animT * 10) % 2, Math.floor(animT * 5) % 2, player.x, player.y, h, player.facing === 1);
+    } else {
+      drawWalker(walk, player.facing, player.frame, player.x, player.y, h, moving);
+    }
+    ctx.globalAlpha = 1;
+  };
+
+  const label = (x: number, y: number, text: string) => {
+    ctx.fillStyle = "rgba(7,8,12,0.7)";
+    ctx.fillRect(x - 52, y, 104, 16);
+    ctx.fillStyle = "#5eead4";
+    ctx.font = "11px IBM Plex Sans, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(text, x, y + 12);
+  };
+
   const draw = (mx: number, attacking: boolean) => {
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
@@ -758,75 +1066,137 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
     ctx.fillRect(0, 0, w, h);
 
     if (st.mode === "city") {
+      const lay = layoutFor(city());
       drawParallax(w, h);
       ctx.save();
       ctx.translate(-cam.x, 0);
-      tileFill(street, 0, GROUND + 20, CITY_W, h - GROUND, 96);
+      tileFill(street, 0, GROUND + 20, lay.width, h - GROUND, 96);
       ctx.fillStyle = "rgba(7,8,12,0.35)";
-      ctx.fillRect(0, GROUND + 20, CITY_W, 8);
-      if (haul) {
-        const hh = 210;
-        const hw = (haul.width / haul.height) * hh;
-        ctx.drawImage(haul, 120, GROUND + 28 - hh, hw, hh);
-      }
-      for (const b of LAYOUT) {
-        const im = bldImgs[b.id];
-        const bh = 200;
-        if (im) {
-          const bw = Math.min(220, (im.width / im.height) * bh);
-          ctx.drawImage(im, b.x - bw / 2, GROUND + 24 - bh, bw, bh);
+      ctx.fillRect(0, GROUND + 20, lay.width, 8);
+      for (const s of lay.spots) {
+        if (s.kind === "ship" && haul) {
+          const hh = 210;
+          const hw = (haul.width / haul.height) * hh;
+          ctx.drawImage(haul, s.x - 40, GROUND + 28 - hh, hw, hh);
+          label(s.x, GROUND + 28, "Nighthaul");
+        } else if (s.kind === "gate") {
+          ctx.fillStyle = "rgba(94,234,212,0.18)";
+          ctx.fillRect(s.x - 36, GROUND - 90, 72, 118);
+          ctx.strokeStyle = "#5eead4";
+          ctx.strokeRect(s.x - 36, GROUND - 90, 72, 118);
+          if (pod) ctx.drawImage(pod, s.x - 70, GROUND - 20, 140, 78);
+          label(s.x, GROUND + 28, "Pod gate");
+        } else if (s.kind === "mine") {
+          ctx.fillStyle = "#14161c";
+          ctx.fillRect(s.x - 40, GROUND - 30, 80, 50);
+          label(s.x, GROUND + 28, "Undercity");
+        } else if (s.kind === "building") {
+          const im = bldImgs[s.id];
+          const bh = 200;
+          if (im) {
+            const bw = Math.min(220, (im.width / im.height) * bh);
+            ctx.drawImage(im, s.x - bw / 2, GROUND + 24 - bh, bw, bh);
+          }
+          if (s.id === "hospital") {
+            ctx.fillStyle = "#5eead4";
+            ctx.fillRect(s.x - 8, GROUND - 150, 16, 40);
+            ctx.fillRect(s.x - 20, GROUND - 138, 40, 16);
+          }
+          label(s.x, GROUND + 28, BUILDINGS.find((x) => x.id === s.id)?.name ?? s.id);
         }
-        ctx.fillStyle = "rgba(7,8,12,0.7)";
-        ctx.fillRect(b.x - 46, GROUND + 28, 92, 16);
-        ctx.fillStyle = "#5eead4";
-        ctx.font = "11px IBM Plex Sans, sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText(BUILDINGS.find((x) => x.id === b.id)?.name ?? b.id, b.x, GROUND + 40);
       }
-      drawSheet(mechanicImg, 2, 2, Math.floor(animT * 5) % 2, 0, 560, GROUND + 58, 118);
-      drawSheet(bartenderImg, 2, 2, Math.floor(animT * 5) % 2, 0, 920, GROUND + 58, 114);
-      drawSheet(merchantImg, 2, 2, Math.floor(animT * 4) % 2, 0, 1620, GROUND + 58, 118);
+      drawSheet(mechanicImg, 2, 2, Math.floor(animT * 5) % 2, 0, (lay.spots.find((s) => s.kind === "building" && s.id === "parts")?.x ?? 560), GROUND + 58, 118);
+      drawSheet(bartenderImg, 2, 2, Math.floor(animT * 5) % 2, 0, (lay.spots.find((s) => s.kind === "building" && s.id === "bar")?.x ?? 920), GROUND + 58, 114);
+      drawSheet(merchantImg, 2, 2, Math.floor(animT * 4) % 2, 0, (lay.spots.find((s) => s.kind === "building" && s.id === "exchange")?.x ?? 1620), GROUND + 58, 118);
       for (const m of muggers) {
         if (m.hp <= 0) continue;
         ctx.globalAlpha = m.hurt > 0 ? 0.55 : 1;
         drawSheet(muggerImg, 2, 2, Math.floor(m.frame) % 2, Math.floor(m.frame / 2) % 2, m.x, m.y, 124, m.facing === 1);
         ctx.globalAlpha = 1;
       }
-      const moving = Math.abs(mx) > 0.08;
-      const row = player.facing;
-      const col = moving ? Math.floor(player.frame) % 4 : 0;
-      const atkImg = st.hasPistol ? pistol : melee;
-      ctx.globalAlpha = player.hurt > 0 ? 0.6 : 1;
-      ctx.fillStyle = "rgba(0,0,0,0.35)";
-      ctx.beginPath();
-      ctx.ellipse(player.x, player.y - 6, 22, 8, 0, 0, Math.PI * 2);
-      ctx.fill();
-      if (attacking && atkCd > 0.02) {
-        drawSheet(atkImg, 2, 2, Math.floor(animT * 10) % 2, Math.floor(animT * 5) % 2, player.x, player.y, 176, player.facing === 1);
-      } else {
-        drawSheet(walk, 4, 4, col, row, player.x, player.y, 176);
-      }
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = "rgba(94,234,212,0.85)";
-      ctx.font = "12px IBM Plex Sans, sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("E  ship", 220, GROUND - 8);
-      ctx.fillText("E  undercity", CITY_W - 200, GROUND - 8);
+      drawPlayer(mx, attacking);
       ctx.restore();
-    } else if (st.mode === "ship") {
-      if (shipIn) ctx.drawImage(shipIn, 0, 0, w, h);
-      tileFill(deck, 80, 380, w - 160, 160, 72);
+    } else if (st.mode === "interior") {
+      const inn = st.interior ? inImgs[st.interior] : null;
+      if (inn) ctx.drawImage(inn, 0, 0, w, h);
+      else if (shipIn) ctx.drawImage(shipIn, 0, 0, w, h);
+      ctx.fillStyle = "rgba(7,8,12,0.28)";
+      ctx.fillRect(0, GROUND - 10, w, h - GROUND + 10);
+      tileFill(street, 0, GROUND + 16, w, 80, 96);
       ctx.fillStyle = "rgba(7,8,12,0.55)";
-      ctx.fillRect(40, 24, 280, 64);
+      ctx.fillRect(24, 24, 320, 56);
       ctx.fillStyle = "#e8eef4";
       ctx.font = "16px Syne, sans-serif";
       ctx.textAlign = "left";
-      ctx.fillText("NIGHTHAUL  ·  hold", 56, 50);
+      ctx.fillText(BUILDINGS.find((b) => b.id === st.interior)?.name ?? "Inside", 40, 48);
       ctx.fillStyle = "#8b96a5";
       ctx.font = "12px IBM Plex Sans, sans-serif";
-      ctx.fillText("E west hatch · E east helm · M star map", 56, 72);
-      drawSheet(walk, 4, 4, Math.floor(player.frame) % 4, player.facing, player.x, player.y, 140);
+      ctx.fillText("E west door · E counter", 40, 68);
+      const npc = st.interior === "bar" ? bartenderImg : st.interior === "parts" ? mechanicImg : merchantImg;
+      drawSheet(npc, 2, 2, Math.floor(animT * 5) % 2, 0, 520, GROUND + 40, 128);
+      drawPlayer(mx, false, 160);
+    } else if (st.mode === "ship") {
+      if (shipIn) ctx.drawImage(shipIn, 0, 0, w, h);
+      tileFill(deck, 80, 380, w - 160, 160, 72);
+      const stations = [
+        [200, "Hatch"],
+        [320, "Cargo"],
+        [450, "Cryo"],
+        [590, "Pod"],
+        [740, "Helm"],
+      ] as const;
+      for (const [x, name] of stations) {
+        ctx.fillStyle = Math.abs(player.x - x) < 70 ? "rgba(94,234,212,0.28)" : "rgba(7,8,12,0.45)";
+        ctx.fillRect(x - 48, 348, 96, 22);
+        ctx.fillStyle = "#5eead4";
+        ctx.font = "11px IBM Plex Sans, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(name, x, 363);
+      }
+      ctx.fillStyle = "rgba(7,8,12,0.55)";
+      ctx.fillRect(40, 24, 300, 64);
+      ctx.fillStyle = "#e8eef4";
+      ctx.font = "16px Syne, sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText("NIGHTHAUL", 56, 50);
+      ctx.fillStyle = "#8b96a5";
+      ctx.font = "12px IBM Plex Sans, sans-serif";
+      ctx.fillText("Stations along the deck · M star map", 56, 72);
       if (pod) ctx.drawImage(pod, 520, 300, 180, 100);
+      drawWalker(walk, player.facing, player.frame, player.x, player.y, 140, Math.abs(mx) > 0.08);
+    } else if (st.mode === "planet") {
+      drawParallax(w, h);
+      ctx.save();
+      ctx.translate(-cam.x, 0);
+      tileFill(street, 0, GROUND + 24, PLANET_W, h - GROUND, 96);
+      for (const c of citiesOn(st.planet)) {
+        const x = planetX(c.id, st.planet);
+        const b0 = c.buildings[0];
+        const im = bldImgs[b0] ?? bldImgs.bar;
+        if (im) ctx.drawImage(im, x - 70, GROUND - 160, 140, 190);
+        if (c.starport && haul) ctx.drawImage(haul, x - 210, GROUND - 170, 110, 200);
+        label(x, GROUND + 32, c.name);
+      }
+      ctx.fillStyle = "#14161c";
+      ctx.fillRect(1360, GROUND - 10, 80, 40);
+      ctx.fillRect(2960, GROUND - 10, 80, 40);
+      label(1400, GROUND + 32, "Mine");
+      label(3000, GROUND + 32, "Mine");
+      if (pod) {
+        const pw = 220;
+        const ph = 120;
+        ctx.save();
+        if (player.facing === 1) {
+          ctx.translate(player.x, player.y);
+          ctx.scale(-1, 1);
+          ctx.drawImage(pod, -pw / 2, -ph + 16, pw, ph);
+        } else {
+          ctx.drawImage(pod, player.x - pw / 2, player.y - ph + 16, pw, ph);
+        }
+        ctx.restore();
+      }
+      drawPlayer(mx, false, 110);
+      ctx.restore();
     } else if (st.mode === "space") {
       if (spaceBg) {
         const px = -((cam.x * 0.08) % spaceBg.width);
@@ -877,17 +1247,11 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
         }
       }
       const moving = Math.abs(mx) > 0.08;
-      drawSheet(
-        attacking ? mineAnim : walk,
-        attacking ? 2 : 4,
-        attacking ? 2 : 4,
-        attacking ? Math.floor(animT * 8) % 2 : moving ? Math.floor(player.frame) % 4 : 0,
-        attacking ? 0 : player.facing === 1 ? 1 : 2,
-        minePx * MINE_T,
-        minePy * MINE_T + 18,
-        52,
-        player.facing === 1,
-      );
+      if (attacking) {
+        drawSheet(mineAnim, 2, 2, Math.floor(animT * 8) % 2, 0, minePx * MINE_T, minePy * MINE_T + 18, 52, player.facing === 1);
+      } else {
+        drawWalker(walk, player.facing === 1 ? 1 : 2, player.frame, minePx * MINE_T, minePy * MINE_T + 18, 52, moving);
+      }
       ctx.fillStyle = "#5eead4";
       ctx.font = "12px IBM Plex Sans, sans-serif";
       ctx.fillText("ladder", 24, 6 * MINE_T - 8);
@@ -899,10 +1263,19 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
       if (!im) continue;
       ctx.save();
       ctx.globalAlpha = clamp(f.life * 4, 0, 1);
-      const sx = st.mode === "city" ? f.x - cam.x : st.mode === "space" ? f.x - cam.x : f.x - cam.x;
-      const sy = st.mode === "city" ? f.y : f.y - cam.y;
+      const sx = f.x - cam.x;
+      const sy = st.mode === "city" || st.mode === "planet" || st.mode === "interior" || st.mode === "ship" ? f.y : f.y - cam.y;
       ctx.drawImage(im, sx - 24, sy - 24, 48, 48);
       ctx.restore();
+    }
+
+    if (hint) {
+      ctx.fillStyle = "rgba(7,8,12,0.72)";
+      ctx.fillRect(w / 2 - 140, h - 92, 280, 28);
+      ctx.fillStyle = "#5eead4";
+      ctx.font = "13px IBM Plex Sans, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(hint, w / 2, h - 73);
     }
 
     if (stick.active) {
@@ -936,10 +1309,13 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
 
   status();
   opts.onReady();
+  canvas.tabIndex = 0;
+  canvas.focus();
   raf = requestAnimationFrame(tick);
 
   const api: GameApi = {
     destroy: () => {
+      persist();
       cancelAnimationFrame(raf);
       window.removeEventListener("keydown", kd);
       window.removeEventListener("keyup", ku);
@@ -959,12 +1335,14 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
         if (st.credits < p.prices.pistol) return "Not enough scrip.";
         st.credits -= p.prices.pistol;
         st.hasPistol = true;
+        persist();
         return "Holdout seated.";
       }
       if (id === "baton") {
         if (st.credits < p.prices.baton) return "Not enough scrip.";
         st.credits -= p.prices.baton;
         st.hasBaton = true;
+        persist();
         return "Baton on the belt.";
       }
       const cost = priceOf(p, id);
@@ -972,6 +1350,7 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
       if (!addCargo(id, 1)) return "Hold is full.";
       st.credits -= cost;
       status();
+      persist();
       return `Bought ${GOODS.find((g) => g.id === id)?.name ?? id}.`;
     },
     sell: (id) => {
@@ -980,6 +1359,7 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
       addCargo(id, -1);
       st.credits += Math.floor(cost * 0.72);
       status();
+      persist();
       return `Sold ${id}.`;
     },
     repair: (id) => {
@@ -988,6 +1368,7 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
       addCargo("shunt", -1);
       st.systems[id] = Math.min(100, st.systems[id] + 45);
       status();
+      persist();
       return `${id} jumped.`;
     },
     fit: (id) => {
@@ -999,6 +1380,7 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
       st.modules.push(id);
       st.systems[id] = Math.max(st.systems[id] ?? 0, 80);
       status();
+      persist();
       return `${mod.name} bolted in.`;
     },
     deposit: (n) => {
@@ -1006,6 +1388,7 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
       st.credits -= amt;
       st.bank += amt;
       status();
+      persist();
       return `Parked ${amt}¢.`;
     },
     withdraw: (n) => {
@@ -1013,6 +1396,7 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
       st.bank -= amt;
       st.credits += amt;
       status();
+      persist();
       return `Drew ${amt}¢.`;
     },
     sleep: () => {
@@ -1020,11 +1404,35 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
       st.credits -= 12;
       player.hp = st.maxHp;
       st.hp = st.maxHp;
+      st.rest = 100;
       status();
-      return "A bad mattress. Full vigour.";
+      persist();
+      return "A bad mattress. Rest full.";
+    },
+    heal: () => {
+      if (st.credits < 28) return "Clinic wants 28¢.";
+      st.credits -= 28;
+      player.hp = st.maxHp;
+      st.hp = st.maxHp;
+      status();
+      persist();
+      return "Patched. Stay out of the rain.";
+    },
+    eat: (id) => {
+      const cost = priceOf(planet(), id);
+      if (st.credits < cost) return "Not enough scrip.";
+      st.credits -= cost;
+      if (id === "nutrapack" || id === "grain") st.nourish = Math.min(100, st.nourish + 35);
+      if (id === "stim") {
+        st.rest = Math.min(100, st.rest + 18);
+        player.hp = Math.min(st.maxHp, player.hp + 1);
+      }
+      status();
+      persist();
+      return id === "stim" ? "Hands stop shaking." : "Nourish up.";
     },
     deliver: () => {
-      if (st.planet !== "vesper") return "Colony is on Vesper-9.";
+      if (st.city !== CONTRACT.city) return `Colony is ${CONTRACT.colony}. Drive or warp to Vesper.`;
       let n = 0;
       for (const k of Object.keys(CONTRACT.need) as Array<keyof typeof CONTRACT.need>) {
         const have = st.cargo[k] ?? 0;
@@ -1036,12 +1444,38 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
           n += give;
         }
       }
-      if (st.planet === "vesper" && !cryoTaken.vesper) {
-        cryoTaken.vesper = true;
-        addCargo("cryopod", 1);
-      }
+      if (!st.mail.includes("banville")) st.mail.push("banville");
       status();
+      persist();
       return n ? `Offloaded ${n} for Banville.` : "Nothing the colony still needs.";
+    },
+    store: (id) => {
+      if (!st.cargo[id]) return "Not carrying that.";
+      addCargo(id, -1);
+      const bag = (st.stores[st.city] ??= {});
+      bag[id] = (bag[id] ?? 0) + 1;
+      persist();
+      return `Stashed ${id} in ${city().name}.`;
+    },
+    retrieve: (id) => {
+      const bag = st.stores[st.city] ?? {};
+      if (!bag[id]) return "Nothing in this shed.";
+      if (!addCargo(id, 1)) return "Hold is full.";
+      bag[id] -= 1;
+      if (bag[id] <= 0) delete bag[id];
+      persist();
+      return `Pulled ${id}.`;
+    },
+    takeCryo: () => {
+      const c = city();
+      if (!c.cryo) return "No sleeper logged here.";
+      if (st.cryoTaken[c.id]) return "Already took that pod.";
+      if (!addCargo("cryopod", 1)) return "Hold is full.";
+      st.cryoTaken[c.id] = true;
+      if (c.id === "dockwell" && !st.mail.includes("frostshed")) st.mail.push("frostshed");
+      status();
+      persist();
+      return "Cryopod humming in the hold.";
     },
     warp: (systemId) => {
       const sys = SYSTEMS.find((s) => s.id === systemId);
@@ -1050,21 +1484,22 @@ export async function mountNighthaul(canvas: HTMLCanvasElement, opts: MountOpts)
       if (st.systems.warp < 25) return "Warp is cold. Fit a shunt.";
       if (st.mode !== "space" && st.mode !== "ship") return "Launch first.";
       st.planet = sys.planet;
+      const star = citiesOn(sys.planet).find((c) => c.starport);
+      if (star) st.city = star.id as CityId;
       st.fuel = Math.max(0, st.fuel - 8);
       st.systems.warp = Math.max(0, st.systems.warp - 6);
-      land();
-      if (sys.planet !== "vesper" && !cryoTaken[sys.planet] && Math.random() < 0.65) {
-        /* cryo may sit in warehouse */
-      }
-      if (!cryoTaken[sys.planet]) {
-        cryoTaken[sys.planet] = false;
-      }
+      if (sys.planet === "vesper" && !st.mail.includes("banville")) st.mail.push("banville");
+      if (sys.planet === "slag" && !st.mail.includes("heap")) st.mail.push("heap");
+      launch();
       opts.onMap(false);
       status();
-      return `Fell into ${sys.name}.`;
+      persist();
+      return `Fell into ${sys.name}. E to land.`;
     },
   };
 
+  void fighter;
+  void shopId;
   return api;
 }
 
@@ -1073,8 +1508,8 @@ declare global {
     __controlsTest?: {
       getYaw: () => number;
       getSpeed: () => number;
-      setSteer?: (v: number) => void;
-      setKeys?: (codes: string[]) => void;
+      setSteer: (v: number) => void;
+      setKeys: (codes: string[]) => void;
     };
   }
 }

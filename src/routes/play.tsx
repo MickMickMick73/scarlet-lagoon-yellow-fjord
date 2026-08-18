@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { BUILDINGS, CONTRACT, GOODS, MODULES, PLANETS, PORTRAITS, SYSTEMS } from "@/data/catalog";
+import { BUILDINGS, CITIES, CONTRACT, GOODS, MAIL, MODULES, PLANETS, PORTRAITS, SYSTEMS } from "@/data/catalog";
 import type { GameApi, NighthaulConfig } from "@/game/nighthaul";
 
 export const Route = createFileRoute("/play")({ component: PlayPage });
@@ -29,7 +29,7 @@ function PlayPage() {
       return mountNighthaul(canvas, {
         config: { portrait, name: name.trim() || "Zed" },
         onStatus: setStatus,
-        onReady: () => {},
+        onReady: () => setTick((n) => n + 1),
         onShop: setShop,
         onMap: setMapOpen,
       });
@@ -39,6 +39,7 @@ function PlayPage() {
         if (h) {
           handle = h;
           api.current = h;
+          setTick((n) => n + 1);
         }
       })
       .catch((err) => setStatus(err instanceof Error ? err.message : "Dock sealed."));
@@ -56,21 +57,24 @@ function PlayPage() {
     window.setTimeout(() => setToast(""), 1800);
   };
 
-  const stock =
+  const tradeStock =
     shop === "bar"
-      ? ["nutrapack", "stim"]
+      ? []
       : shop === "parts"
         ? ["shunt", "coolant"]
         : shop === "exchange"
-          ? ["nutrapack", "stim", "chip", "coolant", "copper", "crystal"]
-          : shop === "warehouse"
-            ? ["copper", "crystal", "chip"]
-            : shop === "guns"
-              ? ["pistol", "baton"]
-              : [];
+          ? ["nutrapack", "stim", "chip", "coolant", "copper", "crystal", "plastics", "droids", "solar", "grain"]
+          : shop === "guns"
+            ? ["pistol", "baton"]
+            : [];
 
   const shopMeta = BUILDINGS.find((b) => b.id === shop);
   const planet = PLANETS.find((p) => p.id === st?.planet) ?? PLANETS[0];
+  const city = CITIES.find((c) => c.id === st?.city);
+  const vigor = st ? Math.round(Math.min((st.hp / st.maxHp) * 100, st.rest, st.nourish)) : 0;
+  const shed = st?.stores[st.city] ?? {};
+  const shopTitle =
+    shop === "cargo" ? "Hold" : shop === "cryo" ? "Cryo bay" : shop === "mail" ? "Ship computer" : (shopMeta?.name ?? shop);
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-bg text-fg">
@@ -92,13 +96,19 @@ function PlayPage() {
       {started && st && (
         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4">
           <p className="rounded-md border border-line bg-surface/80 px-3 py-2 text-xs text-muted backdrop-blur-sm">
-            WASD move · E enter · Space fire · M map
-            {st.mode === "space" ? " · A/D yaw · W thrust" : ""}
+            WASD move · E enter · Space fire · M map · C hold
+            {st.mode === "space" ? " · A/D yaw · W thrust · E land" : ""}
+            {st.mode === "planet" ? " · A/D drive pod · E city" : ""}
             {st.mode === "mine" ? " · W jump · click/S dig" : ""}
           </p>
-          <p className="font-mono text-xs tabular-nums text-credit">
-            hold {Object.values(st.cargo).reduce((a, b) => a + b, 0)} · fuel {Math.floor(st.fuel)}
-          </p>
+          <div className="rounded-md border border-line bg-surface/80 px-3 py-2 font-mono text-xs tabular-nums text-muted backdrop-blur-sm">
+            <span className="text-accent">V{vigor}</span>
+            <span className="mx-2 text-subtle">rest {Math.floor(st.rest)}</span>
+            <span className="text-subtle">food {Math.floor(st.nourish)}</span>
+            <span className="ml-2 text-credit">
+              {st.credits}¢ · hold {Object.values(st.cargo).reduce((a, b) => a + b, 0)} · fuel {Math.floor(st.fuel)}
+            </span>
+          </div>
         </div>
       )}
 
@@ -114,8 +124,9 @@ function PlayPage() {
             <p className="font-mono text-xs tracking-[0.24em] text-subtle uppercase">A frozen contract</p>
             <h1 className="mt-2 font-display text-4xl font-semibold">Sign as the heir</h1>
             <p className="mt-2 text-sm leading-relaxed text-muted">
-              Uncle left you a wrecked hauler and a debt to {CONTRACT.colony}: chips, nutrapacks, coolant, and three
-              cryogens. Trade the belt, fight in the lane, dig the undercity, keep the ship alive with shunts.
+              Uncle left you a wrecked hauler and a debt to {CONTRACT.colony}: chips, nutrapacks, coolant, grain, and
+              three cryogens. Walk the streets, step inside, drive the pod between cities, fight the lane, dig the
+              undercity.
             </p>
             <label className="mt-6 block text-xs tracking-wide text-subtle uppercase">
               Name
@@ -159,11 +170,13 @@ function PlayPage() {
 
       {shop && st && (
         <div className="absolute inset-0 grid place-items-center bg-bg/70 px-4">
-          <div className="w-full max-w-md rounded-xl border border-line bg-surface p-5">
+          <div className="max-h-[86vh] w-full max-w-md overflow-y-auto rounded-xl border border-line bg-surface p-5">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="font-mono text-xs tracking-[0.2em] text-subtle uppercase">{planet.name}</p>
-                <h2 className="font-display text-2xl font-semibold">{shopMeta?.name ?? shop}</h2>
+                <p className="font-mono text-xs tracking-[0.2em] text-subtle uppercase">
+                  {city?.name ?? planet.name}
+                </p>
+                <h2 className="font-display text-2xl font-semibold">{shopTitle}</h2>
               </div>
               <button
                 type="button"
@@ -173,7 +186,9 @@ function PlayPage() {
                 Leave
               </button>
             </div>
-            <p className="mt-1 font-mono text-xs tabular-nums text-credit">{st.credits}¢ on hand · {st.bank}¢ in vault</p>
+            <p className="mt-1 font-mono text-xs tabular-nums text-credit">
+              {st.credits}¢ on hand · {st.bank}¢ in vault
+            </p>
 
             {shop === "hotel" && (
               <button
@@ -183,6 +198,27 @@ function PlayPage() {
               >
                 Sleep · 12¢
               </button>
+            )}
+
+            {shop === "hospital" && (
+              <button
+                type="button"
+                className="mt-4 w-full rounded-md bg-accent py-2.5 text-sm text-accent-fg"
+                onClick={() => bump(api.current?.heal() ?? "")}
+              >
+                Patch up · 28¢
+              </button>
+            )}
+
+            {shop === "bar" && (
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <button type="button" className="rounded-md border border-line py-2 text-sm" onClick={() => bump(api.current?.eat("nutrapack") ?? "")}>
+                  Eat nutrapack · {planet.prices.nutrapack}¢
+                </button>
+                <button type="button" className="rounded-md border border-line py-2 text-sm" onClick={() => bump(api.current?.eat("stim") ?? "")}>
+                  Stim · {planet.prices.stim}¢
+                </button>
+              </div>
             )}
 
             {shop === "bank" && (
@@ -228,25 +264,100 @@ function PlayPage() {
             )}
 
             {shop === "warehouse" && (
-              <button
-                type="button"
-                className="mt-4 w-full rounded-md bg-accent py-2.5 text-sm text-accent-fg"
-                onClick={() => bump(api.current?.deliver() ?? "")}
-              >
-                Offload for {CONTRACT.colony}
-              </button>
+              <div className="mt-4 space-y-3">
+                {city?.colony && (
+                  <button
+                    type="button"
+                    className="w-full rounded-md bg-accent py-2.5 text-sm text-accent-fg"
+                    onClick={() => bump(api.current?.deliver() ?? "")}
+                  >
+                    Offload for {CONTRACT.colony}
+                  </button>
+                )}
+                {city?.cryo && !st.cryoTaken[st.city] && (
+                  <button
+                    type="button"
+                    className="w-full rounded-md border border-accent py-2.5 text-sm text-accent"
+                    onClick={() => bump(api.current?.takeCryo() ?? "")}
+                  >
+                    Lift the cryopod
+                  </button>
+                )}
+                <p className="text-xs text-muted">Stash cargo here. It stays in {city?.name}.</p>
+                <ul className="space-y-2">
+                  {GOODS.filter((g) => g.id !== "credits" && ((st.cargo[g.id] ?? 0) > 0 || (shed[g.id] ?? 0) > 0)).map((g) => (
+                    <li key={g.id} className="flex items-center justify-between gap-2 rounded-md border border-line px-3 py-2">
+                      <span className="text-sm">
+                        {g.name}
+                        <span className="ml-2 font-mono text-xs text-subtle">
+                          hold {st.cargo[g.id] ?? 0} · shed {shed[g.id] ?? 0}
+                        </span>
+                      </span>
+                      <span className="flex gap-1">
+                        <button type="button" className="rounded-md bg-accent px-2 py-1 text-xs text-accent-fg" onClick={() => bump(api.current?.store(g.id) ?? "")}>
+                          Store
+                        </button>
+                        <button type="button" className="rounded-md border border-line px-2 py-1 text-xs" onClick={() => bump(api.current?.retrieve(g.id) ?? "")}>
+                          Take
+                        </button>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
 
-            {stock.length > 0 && (
+            {shop === "cargo" && (
               <ul className="mt-4 space-y-2">
-                {stock.map((id) => {
+                {Object.keys(st.cargo).length === 0 && <li className="text-sm text-muted">Hold is empty.</li>}
+                {Object.entries(st.cargo).map(([id, n]) => (
+                  <li key={id} className="flex justify-between rounded-md border border-line px-3 py-2 text-sm">
+                    <span>{GOODS.find((g) => g.id === id)?.name ?? id}</span>
+                    <span className="font-mono text-subtle">{n}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {shop === "cryo" && (
+              <div className="mt-4 space-y-2 text-sm text-muted">
+                <p>Sleepers in the hold: {st.cargo.cryopod ?? 0} / {CONTRACT.need.cryopod}</p>
+                <p>Delivered to Banville: {st.delivered.cryopod ?? 0}</p>
+                <p className="text-xs">Hints live on the ship computer. Walk the hatch cities — Dockwell, Heap, Frostshed.</p>
+                <button type="button" className="w-full rounded-md border border-line py-2 text-sm" onClick={() => setShop("mail")}>
+                  Open computer
+                </button>
+              </div>
+            )}
+
+            {shop === "mail" && (
+              <ul className="mt-4 space-y-3">
+                {st.mail.map((id) => {
+                  const m = MAIL.find((x) => x.id === id);
+                  if (!m) return null;
+                  return (
+                    <li key={id} className="rounded-md border border-line px-3 py-3">
+                      <p className="font-mono text-xs text-subtle">{m.from}</p>
+                      <p className="text-sm font-medium">{m.title}</p>
+                      <p className="mt-1 text-xs leading-relaxed text-muted">{m.body}</p>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+
+            {tradeStock.length > 0 && (
+              <ul className="mt-4 space-y-2">
+                {tradeStock.map((id) => {
                   const g = GOODS.find((x) => x.id === id);
                   const price = (planet.prices as Record<string, number>)[id] ?? 20;
                   return (
                     <li key={`${id}-${tick}`} className="flex items-center justify-between gap-2 rounded-md border border-line px-3 py-2">
                       <span>
                         <span className="block text-sm">{g?.name ?? id}</span>
-                        <span className="block text-xs text-muted">{price}¢ · have {st.cargo[id] ?? 0}</span>
+                        <span className="block text-xs text-muted">
+                          {price}¢ · have {st.cargo[id] ?? 0}
+                        </span>
                       </span>
                       <span className="flex gap-1">
                         <button type="button" className="rounded-md bg-accent px-2 py-1 text-xs text-accent-fg" onClick={() => bump(api.current?.buy(id) ?? "")}>
@@ -274,7 +385,7 @@ function PlayPage() {
                 Close
               </button>
             </div>
-            <p className="mt-1 text-xs text-muted">Warp wants a live shunt. Ghost systems have no dock.</p>
+            <p className="mt-1 text-xs text-muted">Warp from helm or space. Then E to land the starport.</p>
             <div className="relative mt-4 h-56 overflow-hidden rounded-lg border border-line bg-raised">
               {SYSTEMS.map((s) => (
                 <button
@@ -288,6 +399,9 @@ function PlayPage() {
                 </button>
               ))}
             </div>
+            <p className="mt-3 text-xs text-muted">
+              Cities on {planet.name}: {CITIES.filter((c) => c.planet === planet.id).map((c) => c.name).join(" · ")}
+            </p>
           </div>
         </div>
       )}

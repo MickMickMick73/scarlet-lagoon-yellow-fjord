@@ -29,7 +29,10 @@ export const PLANETS = [
     far: "/assets/nh/parallax/kessler-far.jpg",
     sky: "/assets/nh/parallax/kessler-sky.jpg",
     near: "/assets/nh/parallax/kessler-near.jpg",
-    prices: { stim: 12, nutrapack: 9, chip: 22, coolant: 14, copper: 18, crystal: 28, shunt: 36, pistol: 28, baton: 14 },
+    prices: {
+      stim: 12, nutrapack: 9, chip: 22, coolant: 14, copper: 18, crystal: 28, shunt: 36,
+      pistol: 28, baton: 14, plastics: 11, droids: 42, solar: 19, grain: 8,
+    },
   },
   {
     id: "slag",
@@ -38,7 +41,10 @@ export const PLANETS = [
     far: "/assets/nh/parallax/slag-far.jpg",
     sky: "/assets/nh/parallax/kessler-sky.jpg",
     near: "/assets/nh/parallax/kessler-near.jpg",
-    prices: { stim: 16, nutrapack: 15, chip: 20, coolant: 11, copper: 8, crystal: 16, shunt: 42, pistol: 32, baton: 16 },
+    prices: {
+      stim: 16, nutrapack: 15, chip: 20, coolant: 11, copper: 8, crystal: 16, shunt: 42,
+      pistol: 32, baton: 16, plastics: 9, droids: 38, solar: 14, grain: 18,
+    },
   },
   {
     id: "vesper",
@@ -47,7 +53,10 @@ export const PLANETS = [
     far: "/assets/nh/parallax/vesper-far.jpg",
     sky: "/assets/nh/parallax/kessler-sky.jpg",
     near: "/assets/nh/parallax/kessler-near.jpg",
-    prices: { stim: 14, nutrapack: 11, chip: 18, coolant: 20, copper: 14, crystal: 22, shunt: 40, pistol: 30, baton: 15 },
+    prices: {
+      stim: 14, nutrapack: 11, chip: 18, coolant: 20, copper: 14, crystal: 22, shunt: 40,
+      pistol: 30, baton: 15, plastics: 16, droids: 48, solar: 24, grain: 10,
+    },
   },
 ] as const;
 
@@ -59,10 +68,81 @@ export const BUILDINGS = [
   { id: "warehouse", name: "Bonded shed", kind: "warehouse" as const, src: "/assets/nh/buildings/warehouse.png" },
   { id: "hotel", name: "Flophouse", kind: "hotel" as const, src: "/assets/nh/buildings/hotel.png" },
   { id: "guns", name: "Holdout", kind: "guns" as const, src: "/assets/nh/buildings/guns.png" },
+  { id: "hospital", name: "Clinic", kind: "hospital" as const, src: "/assets/nh/buildings/hospital.png" },
 ] as const;
 
+export type BuildingId = (typeof BUILDINGS)[number]["id"];
+
+export const CITIES = [
+  {
+    id: "rainspire",
+    name: "Rainspire",
+    planet: "kessler" as const,
+    starport: true,
+    cryo: false,
+    colony: false,
+    buildings: ["parts", "bar", "bank", "exchange", "warehouse", "hotel", "guns", "hospital"] as BuildingId[],
+  },
+  {
+    id: "dockwell",
+    name: "Dockwell",
+    planet: "kessler" as const,
+    starport: false,
+    cryo: true,
+    colony: false,
+    buildings: ["bar", "exchange", "warehouse", "hotel", "guns"] as BuildingId[],
+  },
+  {
+    id: "lowwatt",
+    name: "Lowwatt",
+    planet: "kessler" as const,
+    starport: false,
+    cryo: false,
+    colony: false,
+    buildings: ["bar", "parts", "hotel", "hospital"] as BuildingId[],
+  },
+  {
+    id: "cinderport",
+    name: "Cinderport",
+    planet: "slag" as const,
+    starport: true,
+    cryo: false,
+    colony: false,
+    buildings: ["parts", "bar", "bank", "exchange", "warehouse", "hotel", "guns", "hospital"] as BuildingId[],
+  },
+  {
+    id: "heap",
+    name: "Heap",
+    planet: "slag" as const,
+    starport: false,
+    cryo: true,
+    colony: false,
+    buildings: ["bar", "exchange", "warehouse", "guns"] as BuildingId[],
+  },
+  {
+    id: "banville",
+    name: "Banville Hold",
+    planet: "vesper" as const,
+    starport: true,
+    cryo: false,
+    colony: true,
+    buildings: ["exchange", "warehouse", "bar", "hotel", "hospital", "parts"] as BuildingId[],
+  },
+  {
+    id: "frostshed",
+    name: "Frostshed",
+    planet: "vesper" as const,
+    starport: false,
+    cryo: true,
+    colony: false,
+    buildings: ["bar", "warehouse", "hotel", "parts"] as BuildingId[],
+  },
+] as const;
+
+export type CityId = (typeof CITIES)[number]["id"];
+
 export const GOODS = [
-  { id: "nutrapack", name: "Nutrapack", desc: "Stops the shakes." },
+  { id: "nutrapack", name: "Nutrapack", desc: "Stops the shakes. Eaten at a bar." },
   { id: "stim", name: "Stim vial", desc: "A short second wind." },
   { id: "chip", name: "Chip wafer", desc: "Colony wants these." },
   { id: "coolant", name: "Coolant", desc: "Keeps warp from cooking." },
@@ -71,6 +151,10 @@ export const GOODS = [
   { id: "shunt", name: "Shunt", desc: "Jury-rig a dead system." },
   { id: "pistol", name: "Holdout pistol", desc: "Street argument." },
   { id: "baton", name: "Baton", desc: "Close work." },
+  { id: "plastics", name: "Bulk plastics", desc: "Prefab sheets. Always moving." },
+  { id: "droids", name: "Labor droids", desc: "Colony muscle in a crate." },
+  { id: "solar", name: "Solar cells", desc: "Cheap power for new towns." },
+  { id: "grain", name: "Grain crate", desc: "Staple. Heavy. Pays." },
   { id: "cryopod", name: "Cryopod", desc: "A sleeper. Not for sale." },
   { id: "credits", name: "Credit chit", desc: "Dock scrip." },
 ] as const;
@@ -93,8 +177,42 @@ export const MODULES = [
 
 export const CONTRACT = {
   colony: "Banville Hold",
-  need: { chip: 6, nutrapack: 8, coolant: 4, cryopod: 3 },
+  city: "banville" as CityId,
+  need: { chip: 6, nutrapack: 8, coolant: 4, grain: 4, cryopod: 3 },
 } as const;
+
+export const MAIL = [
+  {
+    id: "will",
+    from: "Spinner, Crest & Tatutha",
+    title: "The wreck is yours",
+    body: "Your uncle died in warp. The Nighthaul is liened to you. Banville Hold on Vesper-9 is owed chips, nutrapacks, coolant, grain, and three cryogens. Wake the colony or lose the ship.",
+  },
+  {
+    id: "dockwell",
+    from: "CompTech Bob",
+    title: "Sleeper on Kessler",
+    body: "Corrupted dump says a cryopod is sitting in Dockwell's bonded shed. Rainspire is the starport. Drive the pod east along the highway.",
+  },
+  {
+    id: "heap",
+    from: "CompTech Bob",
+    title: "Sleeper on Slagreach",
+    body: "Second cryo ping: Heap, the slag town past Cinderport. Warehouse, back cage. Watch the muggers.",
+  },
+  {
+    id: "frostshed",
+    from: "CompTech Bob",
+    title: "Sleeper on Vesper",
+    body: "Last known sleeper is in Frostshed's shed, ice side of Banville. Deliver all three to the colony exchange.",
+  },
+  {
+    id: "banville",
+    from: "Ranor Hutton",
+    title: "The frozen contract",
+    body: "Banville Hold is awake enough to receive. Bring chips, food, coolant, grain, and the sleepers. We will sign the ship to you when the list is paid.",
+  },
+] as const;
 
 export const ASSETS: AssetEntry[] = [
   { id: "walk", name: "Courier walk", kind: "Cast", src: "/assets/nh/heroes/walk.png", sheet: { cols: 4, rows: 4, fps: 8 } },
@@ -117,6 +235,7 @@ export const ASSETS: AssetEntry[] = [
   { id: "slag-far", name: "Slagreach far", kind: "Streets", src: "/assets/nh/parallax/slag-far.jpg" },
   { id: "vesper-far", name: "Vesper far", kind: "Streets", src: "/assets/nh/parallax/vesper-far.jpg" },
   { id: "street", name: "Wet asphalt", kind: "Streets", src: "/assets/nh/tiles/street.png" },
+  { id: "highway", name: "Planet highway", kind: "Streets", src: "/assets/nh/tiles/highway.png" },
   ...BUILDINGS.map((b) => ({ id: b.id, name: b.name, kind: "Streets" as const, src: b.src })),
   { id: "nighthaul", name: "Nighthaul", kind: "Ships", src: "/assets/nh/ships/nighthaul.png" },
   { id: "pod", name: "Cargo pod", kind: "Ships", src: "/assets/nh/ships/pod.png" },
@@ -124,7 +243,12 @@ export const ASSETS: AssetEntry[] = [
   { id: "pirate", name: "Pirate interceptor", kind: "Ships", src: "/assets/nh/ships/pirate.png" },
   { id: "space", name: "Warp lane", kind: "Ships", src: "/assets/nh/parallax/space.jpg" },
   { id: "ship-hold", name: "Ship hold", kind: "Interiors", src: "/assets/nh/interiors/ship.jpg" },
-  { id: "bar-in", name: "Low Orbit inside", kind: "Interiors", src: "/assets/nh/interiors/bar.jpg" },
+  ...BUILDINGS.map((b) => ({
+    id: `in-${b.id}`,
+    name: `${b.name} inside`,
+    kind: "Interiors" as const,
+    src: `/assets/nh/interiors/${b.id}.jpg`,
+  })),
   ...GOODS.map((g) => ({
     id: g.id,
     name: g.name,

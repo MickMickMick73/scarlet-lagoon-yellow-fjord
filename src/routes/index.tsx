@@ -59,9 +59,9 @@ function Home() {
             Inherit the wreck. Wake the colony.
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
-            Cyberpunk spiritual successor to SunDog. Walk rain cities, trade the exchange, bolt shunts into a dying
-            hauler, dogfight the warp lane, and dig the undercity. {CONTRACT.colony} wants chips, food, coolant, and
-            three sleepers.
+            Cyberpunk spiritual successor to SunDog. Walk rain cities, step into bars and exchanges, drive a pod
+            between towns, bolt shunts into a dying hauler, dogfight the warp lane, and dig the undercity.{" "}
+            {CONTRACT.colony} wants chips, food, coolant, grain, and three sleepers.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link to="/play" className="rounded-md bg-accent px-5 py-3 text-sm font-medium text-accent-fg">
