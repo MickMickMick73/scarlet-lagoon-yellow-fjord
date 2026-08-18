@@ -1,0 +1,692 @@
+{
+  "input": "/workspace/assets/items/loot/raw-sheet.jpg",
+  "rows": 4,
+  "cols": 4,
+  "threshold": 100,
+  "edge_threshold": 150,
+  "component_mode": "largest",
+  "component_padding": 8,
+  "min_component_area": 100,
+  "edge_touch_margin": 0,
+  "accepted": [
+    {
+      "index": 0,
+      "label": "potion-red",
+      "grid": [
+        0,
+        0
+      ],
+      "source_box": [
+        0,
+        0,
+        352,
+        352
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 29207,
+      "selected_component_bbox": [
+        100,
+        46,
+        275,
+        309
+      ],
+      "crop_bbox": [
+        100,
+        46,
+        275,
+        309
+      ],
+      "padded_crop_bbox": [
+        92,
+        38,
+        283,
+        317
+      ],
+      "edge_touch": false,
+      "output_size": [
+        191,
+        279
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/items/potion-red/prop.png"
+    },
+    {
+      "index": 1,
+      "label": "potion-blue",
+      "grid": [
+        0,
+        1
+      ],
+      "source_box": [
+        352,
+        0,
+        704,
+        352
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 28714,
+      "selected_component_bbox": [
+        74,
+        49,
+        246,
+        309
+      ],
+      "crop_bbox": [
+        74,
+        49,
+        246,
+        309
+      ],
+      "padded_crop_bbox": [
+        66,
+        41,
+        254,
+        317
+      ],
+      "edge_touch": false,
+      "output_size": [
+        188,
+        276
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/items/potion-blue/prop.png"
+    },
+    {
+      "index": 2,
+      "label": "gold",
+      "grid": [
+        0,
+        2
+      ],
+      "source_box": [
+        704,
+        0,
+        1056,
+        352
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 31935,
+      "selected_component_bbox": [
+        9,
+        113,
+        286,
+        298
+      ],
+      "crop_bbox": [
+        9,
+        113,
+        286,
+        298
+      ],
+      "padded_crop_bbox": [
+        1,
+        105,
+        294,
+        306
+      ],
+      "edge_touch": false,
+      "output_size": [
+        293,
+        201
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/items/gold/prop.png"
+    },
+    {
+      "index": 3,
+      "label": "key-gold",
+      "grid": [
+        0,
+        3
+      ],
+      "source_box": [
+        1056,
+        0,
+        1408,
+        352
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 15293,
+      "selected_component_bbox": [
+        15,
+        69,
+        247,
+        316
+      ],
+      "crop_bbox": [
+        15,
+        69,
+        247,
+        316
+      ],
+      "padded_crop_bbox": [
+        7,
+        61,
+        255,
+        324
+      ],
+      "edge_touch": false,
+      "output_size": [
+        248,
+        263
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/items/key-gold/prop.png"
+    },
+    {
+      "index": 4,
+      "label": "key-iron",
+      "grid": [
+        1,
+        0
+      ],
+      "source_box": [
+        0,
+        352,
+        352,
+        704
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 14096,
+      "selected_component_bbox": [
+        75,
+        40,
+        294,
+        281
+      ],
+      "crop_bbox": [
+        75,
+        40,
+        294,
+        281
+      ],
+      "padded_crop_bbox": [
+        67,
+        32,
+        302,
+        289
+      ],
+      "edge_touch": false,
+      "output_size": [
+        235,
+        257
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/items/key-iron/prop.png"
+    },
+    {
+      "index": 5,
+      "label": "ruby",
+      "grid": [
+        1,
+        1
+      ],
+      "source_box": [
+        352,
+        352,
+        704,
+        704
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 30586,
+      "selected_component_bbox": [
+        58,
+        72,
+        265,
+        267
+      ],
+      "crop_bbox": [
+        58,
+        72,
+        265,
+        267
+      ],
+      "padded_crop_bbox": [
+        50,
+        64,
+        273,
+        275
+      ],
+      "edge_touch": false,
+      "output_size": [
+        223,
+        211
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/items/ruby/prop.png"
+    },
+    {
+      "index": 6,
+      "label": "emerald",
+      "grid": [
+        1,
+        2
+      ],
+      "source_box": [
+        704,
+        352,
+        1056,
+        704
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 28942,
+      "selected_component_bbox": [
+        41,
+        74,
+        242,
+        266
+      ],
+      "crop_bbox": [
+        41,
+        74,
+        242,
+        266
+      ],
+      "padded_crop_bbox": [
+        33,
+        66,
+        250,
+        274
+      ],
+      "edge_touch": false,
+      "output_size": [
+        217,
+        208
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/items/emerald/prop.png"
+    },
+    {
+      "index": 7,
+      "label": "sword",
+      "grid": [
+        1,
+        3
+      ],
+      "source_box": [
+        1056,
+        352,
+        1408,
+        704
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 14132,
+      "selected_component_bbox": [
+        0,
+        22,
+        264,
+        300
+      ],
+      "crop_bbox": [
+        0,
+        22,
+        264,
+        300
+      ],
+      "padded_crop_bbox": [
+        0,
+        14,
+        272,
+        308
+      ],
+      "edge_touch": true,
+      "output_size": [
+        272,
+        294
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/items/sword/prop.png"
+    },
+    {
+      "index": 8,
+      "label": "axe",
+      "grid": [
+        2,
+        0
+      ],
+      "source_box": [
+        0,
+        704,
+        352,
+        1056
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 18943,
+      "selected_component_bbox": [
+        69,
+        0,
+        275,
+        298
+      ],
+      "crop_bbox": [
+        69,
+        0,
+        275,
+        298
+      ],
+      "padded_crop_bbox": [
+        61,
+        0,
+        283,
+        306
+      ],
+      "edge_touch": true,
+      "output_size": [
+        222,
+        306
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/items/axe/prop.png"
+    },
+    {
+      "index": 9,
+      "label": "bow",
+      "grid": [
+        2,
+        1
+      ],
+      "source_box": [
+        352,
+        704,
+        704,
+        1056
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 11895,
+      "selected_component_bbox": [
+        44,
+        5,
+        287,
+        303
+      ],
+      "crop_bbox": [
+        44,
+        5,
+        287,
+        303
+      ],
+      "padded_crop_bbox": [
+        36,
+        0,
+        295,
+        311
+      ],
+      "edge_touch": false,
+      "output_size": [
+        259,
+        311
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/items/bow/prop.png"
+    },
+    {
+      "index": 10,
+      "label": "staff",
+      "grid": [
+        2,
+        2
+      ],
+      "source_box": [
+        704,
+        704,
+        1056,
+        1056
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 12561,
+      "selected_component_bbox": [
+        40,
+        0,
+        230,
+        312
+      ],
+      "crop_bbox": [
+        40,
+        0,
+        230,
+        312
+      ],
+      "padded_crop_bbox": [
+        32,
+        0,
+        238,
+        320
+      ],
+      "edge_touch": true,
+      "output_size": [
+        206,
+        320
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/items/staff/prop.png"
+    },
+    {
+      "index": 11,
+      "label": "shield",
+      "grid": [
+        2,
+        3
+      ],
+      "source_box": [
+        1056,
+        704,
+        1408,
+        1056
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 49859,
+      "selected_component_bbox": [
+        2,
+        21,
+        245,
+        284
+      ],
+      "crop_bbox": [
+        2,
+        21,
+        245,
+        284
+      ],
+      "padded_crop_bbox": [
+        0,
+        13,
+        253,
+        292
+      ],
+      "edge_touch": false,
+      "output_size": [
+        253,
+        279
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/items/shield/prop.png"
+    },
+    {
+      "index": 12,
+      "label": "helm",
+      "grid": [
+        3,
+        0
+      ],
+      "source_box": [
+        0,
+        1056,
+        352,
+        1408
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 34635,
+      "selected_component_bbox": [
+        79,
+        14,
+        276,
+        253
+      ],
+      "crop_bbox": [
+        79,
+        14,
+        276,
+        253
+      ],
+      "padded_crop_bbox": [
+        71,
+        6,
+        284,
+        261
+      ],
+      "edge_touch": false,
+      "output_size": [
+        213,
+        255
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/items/helm/prop.png"
+    },
+    {
+      "index": 13,
+      "label": "scroll",
+      "grid": [
+        3,
+        1
+      ],
+      "source_box": [
+        352,
+        1056,
+        704,
+        1408
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 26426,
+      "selected_component_bbox": [
+        22,
+        43,
+        299,
+        229
+      ],
+      "crop_bbox": [
+        22,
+        43,
+        299,
+        229
+      ],
+      "padded_crop_bbox": [
+        14,
+        35,
+        307,
+        237
+      ],
+      "edge_touch": false,
+      "output_size": [
+        293,
+        202
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/items/scroll/prop.png"
+    },
+    {
+      "index": 14,
+      "label": "ring",
+      "grid": [
+        3,
+        2
+      ],
+      "source_box": [
+        704,
+        1056,
+        1056,
+        1408
+      ],
+      "component_mode": "largest",
+      "component_count": 2,
+      "selected_component_area": 26627,
+      "selected_component_bbox": [
+        40,
+        54,
+        242,
+        226
+      ],
+      "crop_bbox": [
+        40,
+        54,
+        242,
+        226
+      ],
+      "padded_crop_bbox": [
+        32,
+        46,
+        250,
+        234
+      ],
+      "edge_touch": false,
+      "output_size": [
+        218,
+        188
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/items/ring/prop.png"
+    },
+    {
+      "index": 15,
+      "label": "bread",
+      "grid": [
+        3,
+        3
+      ],
+      "source_box": [
+        1056,
+        1056,
+        1408,
+        1408
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 40968,
+      "selected_component_bbox": [
+        0,
+        36,
+        261,
+        243
+      ],
+      "crop_bbox": [
+        0,
+        36,
+        261,
+        243
+      ],
+      "padded_crop_bbox": [
+        0,
+        28,
+        269,
+        251
+      ],
+      "edge_touch": true,
+      "output_size": [
+        269,
+        223
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/items/bread/prop.png"
+    }
+  ],
+  "rejected": [],
+  "edge_touch_props": [
+    "sword",
+    "axe",
+    "staff",
+    "bread"
+  ]
+}

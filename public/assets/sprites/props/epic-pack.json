@@ -1,0 +1,396 @@
+{
+  "input": "/workspace/artifacts/imagine_images/b83a7a1d-cea1-4a7b-abd9-c77233536a4d.jpg",
+  "rows": 3,
+  "cols": 3,
+  "threshold": 100,
+  "edge_threshold": 150,
+  "component_mode": "largest",
+  "component_padding": 8,
+  "min_component_area": 100,
+  "edge_touch_margin": 0,
+  "accepted": [
+    {
+      "index": 0,
+      "label": "statue",
+      "grid": [
+        0,
+        0
+      ],
+      "source_box": [
+        0,
+        0,
+        469,
+        469
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 75228,
+      "selected_component_bbox": [
+        82,
+        6,
+        361,
+        461
+      ],
+      "crop_bbox": [
+        82,
+        6,
+        361,
+        461
+      ],
+      "padded_crop_bbox": [
+        74,
+        0,
+        369,
+        461
+      ],
+      "edge_touch": true,
+      "output_size": [
+        295,
+        461
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/statue/prop.png"
+    },
+    {
+      "index": 1,
+      "label": "altar",
+      "grid": [
+        0,
+        1
+      ],
+      "source_box": [
+        469,
+        0,
+        938,
+        469
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 90881,
+      "selected_component_bbox": [
+        25,
+        131,
+        422,
+        433
+      ],
+      "crop_bbox": [
+        25,
+        131,
+        422,
+        433
+      ],
+      "padded_crop_bbox": [
+        17,
+        123,
+        430,
+        441
+      ],
+      "edge_touch": false,
+      "output_size": [
+        413,
+        318
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/altar/prop.png"
+    },
+    {
+      "index": 2,
+      "label": "fountain",
+      "grid": [
+        0,
+        2
+      ],
+      "source_box": [
+        938,
+        0,
+        1407,
+        469
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 70398,
+      "selected_component_bbox": [
+        43,
+        92,
+        391,
+        421
+      ],
+      "crop_bbox": [
+        43,
+        92,
+        391,
+        421
+      ],
+      "padded_crop_bbox": [
+        35,
+        84,
+        399,
+        429
+      ],
+      "edge_touch": false,
+      "output_size": [
+        364,
+        345
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/fountain/prop.png"
+    },
+    {
+      "index": 3,
+      "label": "cage",
+      "grid": [
+        1,
+        0
+      ],
+      "source_box": [
+        0,
+        469,
+        469,
+        938
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 69217,
+      "selected_component_bbox": [
+        102,
+        51,
+        354,
+        417
+      ],
+      "crop_bbox": [
+        102,
+        51,
+        354,
+        417
+      ],
+      "padded_crop_bbox": [
+        94,
+        43,
+        362,
+        425
+      ],
+      "edge_touch": false,
+      "output_size": [
+        268,
+        382
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/cage/prop.png"
+    },
+    {
+      "index": 4,
+      "label": "banner",
+      "grid": [
+        1,
+        1
+      ],
+      "source_box": [
+        469,
+        469,
+        938,
+        938
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 78449,
+      "selected_component_bbox": [
+        68,
+        31,
+        375,
+        437
+      ],
+      "crop_bbox": [
+        68,
+        31,
+        375,
+        437
+      ],
+      "padded_crop_bbox": [
+        60,
+        23,
+        383,
+        445
+      ],
+      "edge_touch": false,
+      "output_size": [
+        323,
+        422
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/banner/prop.png"
+    },
+    {
+      "index": 5,
+      "label": "throne",
+      "grid": [
+        1,
+        2
+      ],
+      "source_box": [
+        938,
+        469,
+        1407,
+        938
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 96385,
+      "selected_component_bbox": [
+        42,
+        10,
+        353,
+        446
+      ],
+      "crop_bbox": [
+        42,
+        10,
+        353,
+        446
+      ],
+      "padded_crop_bbox": [
+        34,
+        2,
+        361,
+        454
+      ],
+      "edge_touch": false,
+      "output_size": [
+        327,
+        452
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/throne/prop.png"
+    },
+    {
+      "index": 6,
+      "label": "campfire",
+      "grid": [
+        2,
+        0
+      ],
+      "source_box": [
+        0,
+        938,
+        469,
+        1407
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 54929,
+      "selected_component_bbox": [
+        56,
+        30,
+        389,
+        364
+      ],
+      "crop_bbox": [
+        56,
+        30,
+        389,
+        364
+      ],
+      "padded_crop_bbox": [
+        48,
+        22,
+        397,
+        372
+      ],
+      "edge_touch": false,
+      "output_size": [
+        349,
+        350
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/campfire/prop.png"
+    },
+    {
+      "index": 7,
+      "label": "bed",
+      "grid": [
+        2,
+        1
+      ],
+      "source_box": [
+        469,
+        938,
+        938,
+        1407
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 73604,
+      "selected_component_bbox": [
+        0,
+        93,
+        426,
+        370
+      ],
+      "crop_bbox": [
+        0,
+        93,
+        426,
+        370
+      ],
+      "padded_crop_bbox": [
+        0,
+        85,
+        434,
+        378
+      ],
+      "edge_touch": true,
+      "output_size": [
+        434,
+        293
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/bed/prop.png"
+    },
+    {
+      "index": 8,
+      "label": "goldchest",
+      "grid": [
+        2,
+        2
+      ],
+      "source_box": [
+        938,
+        938,
+        1407,
+        1407
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 76565,
+      "selected_component_bbox": [
+        50,
+        66,
+        377,
+        364
+      ],
+      "crop_bbox": [
+        50,
+        66,
+        377,
+        364
+      ],
+      "padded_crop_bbox": [
+        42,
+        58,
+        385,
+        372
+      ],
+      "edge_touch": false,
+      "output_size": [
+        343,
+        314
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/goldchest/prop.png"
+    }
+  ],
+  "rejected": [],
+  "edge_touch_props": [
+    "statue",
+    "bed"
+  ]
+}

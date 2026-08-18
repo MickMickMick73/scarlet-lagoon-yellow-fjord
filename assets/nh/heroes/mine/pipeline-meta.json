@@ -1,0 +1,160 @@
+{
+  "target": "player",
+  "mode": "attack",
+  "prompt": "",
+  "role": "",
+  "input": "/workspace/assets/nh/heroes/mine/raw.jpg",
+  "threshold": 100,
+  "edge_threshold": 150,
+  "duration": 200,
+  "rows": 2,
+  "cols": 2,
+  "cell_size": 128,
+  "fit_scale": 0.85,
+  "trim_border": 4,
+  "edge_clean_depth": 3,
+  "align": "feet",
+  "shared_scale": true,
+  "component_mode": "all",
+  "component_padding": 0,
+  "min_component_area": 1,
+  "edge_touch_margin": 0,
+  "frame_labels": [
+    "attack-1",
+    "attack-2",
+    "attack-3",
+    "attack-4"
+  ],
+  "frames": [
+    {
+      "grid": [
+        0,
+        0
+      ],
+      "source_box": [
+        0,
+        0,
+        704,
+        704
+      ],
+      "component_mode": "all",
+      "component_count": 1,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        128,
+        189,
+        482,
+        618
+      ],
+      "edge_touch": false,
+      "output_size": [
+        63,
+        77
+      ],
+      "paste_position": [
+        32,
+        42
+      ]
+    },
+    {
+      "grid": [
+        0,
+        1
+      ],
+      "source_box": [
+        704,
+        0,
+        1408,
+        704
+      ],
+      "component_mode": "all",
+      "component_count": 1,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        144,
+        14,
+        491,
+        619
+      ],
+      "edge_touch": false,
+      "output_size": [
+        62,
+        108
+      ],
+      "paste_position": [
+        33,
+        11
+      ]
+    },
+    {
+      "grid": [
+        1,
+        0
+      ],
+      "source_box": [
+        0,
+        704,
+        704,
+        1408
+      ],
+      "component_mode": "all",
+      "component_count": 1,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        150,
+        143,
+        580,
+        584
+      ],
+      "edge_touch": false,
+      "output_size": [
+        77,
+        79
+      ],
+      "paste_position": [
+        25,
+        40
+      ]
+    },
+    {
+      "grid": [
+        1,
+        1
+      ],
+      "source_box": [
+        704,
+        704,
+        1408,
+        1408
+      ],
+      "component_mode": "all",
+      "component_count": 1,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        143,
+        135,
+        566,
+        585
+      ],
+      "edge_touch": true,
+      "output_size": [
+        76,
+        80
+      ],
+      "paste_position": [
+        26,
+        39
+      ]
+    }
+  ],
+  "edge_touch_frames": [
+    [
+      1,
+      1
+    ]
+  ]
+}

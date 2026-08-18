@@ -1,0 +1,183 @@
+{
+  "input": "/workspace/assets/props/traps/raw-sheet.jpg",
+  "rows": 2,
+  "cols": 2,
+  "threshold": 100,
+  "edge_threshold": 150,
+  "component_mode": "largest",
+  "component_padding": 8,
+  "min_component_area": 100,
+  "edge_touch_margin": 0,
+  "accepted": [
+    {
+      "index": 0,
+      "label": "spikes",
+      "grid": [
+        0,
+        0
+      ],
+      "source_box": [
+        0,
+        0,
+        704,
+        704
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 142765,
+      "selected_component_bbox": [
+        53,
+        126,
+        635,
+        570
+      ],
+      "crop_bbox": [
+        53,
+        126,
+        635,
+        570
+      ],
+      "padded_crop_bbox": [
+        45,
+        118,
+        643,
+        578
+      ],
+      "edge_touch": false,
+      "output_size": [
+        598,
+        460
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/spikes/prop.png"
+    },
+    {
+      "index": 1,
+      "label": "pressure",
+      "grid": [
+        0,
+        1
+      ],
+      "source_box": [
+        704,
+        0,
+        1408,
+        704
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 165417,
+      "selected_component_bbox": [
+        81,
+        147,
+        612,
+        554
+      ],
+      "crop_bbox": [
+        81,
+        147,
+        612,
+        554
+      ],
+      "padded_crop_bbox": [
+        73,
+        139,
+        620,
+        562
+      ],
+      "edge_touch": false,
+      "output_size": [
+        547,
+        423
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/pressure/prop.png"
+    },
+    {
+      "index": 2,
+      "label": "beartrap",
+      "grid": [
+        1,
+        0
+      ],
+      "source_box": [
+        0,
+        704,
+        704,
+        1408
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 121789,
+      "selected_component_bbox": [
+        61,
+        98,
+        604,
+        523
+      ],
+      "crop_bbox": [
+        61,
+        98,
+        604,
+        523
+      ],
+      "padded_crop_bbox": [
+        53,
+        90,
+        612,
+        531
+      ],
+      "edge_touch": false,
+      "output_size": [
+        559,
+        441
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/beartrap/prop.png"
+    },
+    {
+      "index": 3,
+      "label": "poison",
+      "grid": [
+        1,
+        1
+      ],
+      "source_box": [
+        704,
+        704,
+        1408,
+        1408
+      ],
+      "component_mode": "largest",
+      "component_count": 5,
+      "selected_component_area": 129512,
+      "selected_component_bbox": [
+        82,
+        160,
+        603,
+        528
+      ],
+      "crop_bbox": [
+        82,
+        160,
+        603,
+        528
+      ],
+      "padded_crop_bbox": [
+        74,
+        152,
+        611,
+        536
+      ],
+      "edge_touch": false,
+      "output_size": [
+        537,
+        384
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/poison/prop.png"
+    }
+  ],
+  "rejected": [],
+  "edge_touch_props": []
+}

@@ -1,0 +1,184 @@
+{
+  "target": "player",
+  "mode": "shoot",
+  "prompt": "",
+  "role": "",
+  "input": "/workspace/assets/sprites/heroes/ranger-shoot/raw.jpg",
+  "threshold": 100,
+  "edge_threshold": 150,
+  "duration": 200,
+  "rows": 2,
+  "cols": 2,
+  "cell_size": 128,
+  "fit_scale": 0.85,
+  "trim_border": 4,
+  "edge_clean_depth": 3,
+  "align": "feet",
+  "shared_scale": true,
+  "component_mode": "largest",
+  "component_padding": 0,
+  "min_component_area": 1,
+  "edge_touch_margin": 0,
+  "frame_labels": [
+    "shoot-1",
+    "shoot-2",
+    "shoot-3",
+    "shoot-4"
+  ],
+  "frames": [
+    {
+      "grid": [
+        0,
+        0
+      ],
+      "source_box": [
+        0,
+        0,
+        704,
+        704
+      ],
+      "component_mode": "largest",
+      "component_count": 2,
+      "selected_component_area": 135229,
+      "selected_component_bbox": [
+        174,
+        34,
+        578,
+        644
+      ],
+      "crop_bbox": [
+        174,
+        34,
+        578,
+        644
+      ],
+      "edge_touch": true,
+      "output_size": [
+        72,
+        108
+      ],
+      "paste_position": [
+        28,
+        11
+      ]
+    },
+    {
+      "grid": [
+        0,
+        1
+      ],
+      "source_box": [
+        704,
+        0,
+        1408,
+        704
+      ],
+      "component_mode": "largest",
+      "component_count": 2,
+      "selected_component_area": 134212,
+      "selected_component_bbox": [
+        106,
+        35,
+        505,
+        644
+      ],
+      "crop_bbox": [
+        106,
+        35,
+        505,
+        644
+      ],
+      "edge_touch": false,
+      "output_size": [
+        71,
+        108
+      ],
+      "paste_position": [
+        28,
+        11
+      ]
+    },
+    {
+      "grid": [
+        1,
+        0
+      ],
+      "source_box": [
+        0,
+        704,
+        704,
+        1408
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 142312,
+      "selected_component_bbox": [
+        158,
+        0,
+        584,
+        606
+      ],
+      "crop_bbox": [
+        158,
+        0,
+        584,
+        606
+      ],
+      "edge_touch": true,
+      "output_size": [
+        75,
+        108
+      ],
+      "paste_position": [
+        26,
+        11
+      ]
+    },
+    {
+      "grid": [
+        1,
+        1
+      ],
+      "source_box": [
+        704,
+        704,
+        1408,
+        1408
+      ],
+      "component_mode": "largest",
+      "component_count": 3,
+      "selected_component_area": 114988,
+      "selected_component_bbox": [
+        100,
+        62,
+        476,
+        608
+      ],
+      "crop_bbox": [
+        100,
+        62,
+        476,
+        608
+      ],
+      "edge_touch": false,
+      "output_size": [
+        67,
+        97
+      ],
+      "paste_position": [
+        30,
+        22
+      ]
+    }
+  ],
+  "edge_touch_frames": [
+    [
+      0,
+      0
+    ],
+    [
+      1,
+      0
+    ]
+  ]
+}

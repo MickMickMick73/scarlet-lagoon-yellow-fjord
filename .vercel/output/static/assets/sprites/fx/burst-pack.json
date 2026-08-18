@@ -1,0 +1,348 @@
+{
+  "input": "/workspace/artifacts/imagine_images/f713c6a8-cde9-4227-bd2c-97aa11e1b9ab.jpg",
+  "rows": 3,
+  "cols": 3,
+  "threshold": 100,
+  "edge_threshold": 150,
+  "component_mode": "all",
+  "component_padding": 8,
+  "min_component_area": 100,
+  "edge_touch_margin": 0,
+  "accepted": [
+    {
+      "index": 0,
+      "label": "lootgleam",
+      "grid": [
+        0,
+        0
+      ],
+      "source_box": [
+        0,
+        0,
+        469,
+        469
+      ],
+      "component_mode": "all",
+      "component_count": 2,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        65,
+        49,
+        416,
+        452
+      ],
+      "padded_crop_bbox": [
+        57,
+        41,
+        424,
+        460
+      ],
+      "edge_touch": false,
+      "output_size": [
+        367,
+        419
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/fx/lootgleam/prop.png"
+    },
+    {
+      "index": 1,
+      "label": "lightning",
+      "grid": [
+        0,
+        1
+      ],
+      "source_box": [
+        469,
+        0,
+        938,
+        469
+      ],
+      "component_mode": "all",
+      "component_count": 1,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        90,
+        65,
+        386,
+        447
+      ],
+      "padded_crop_bbox": [
+        82,
+        57,
+        394,
+        455
+      ],
+      "edge_touch": false,
+      "output_size": [
+        312,
+        398
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/fx/lightning/prop.png"
+    },
+    {
+      "index": 2,
+      "label": "explosion",
+      "grid": [
+        0,
+        2
+      ],
+      "source_box": [
+        938,
+        0,
+        1407,
+        469
+      ],
+      "component_mode": "all",
+      "component_count": 4,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        27,
+        56,
+        412,
+        435
+      ],
+      "padded_crop_bbox": [
+        19,
+        48,
+        420,
+        443
+      ],
+      "edge_touch": false,
+      "output_size": [
+        401,
+        395
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/fx/explosion/prop.png"
+    },
+    {
+      "index": 3,
+      "label": "poisoncloud",
+      "grid": [
+        1,
+        0
+      ],
+      "source_box": [
+        0,
+        469,
+        469,
+        938
+      ],
+      "component_mode": "all",
+      "component_count": 4,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        60,
+        53,
+        410,
+        411
+      ],
+      "padded_crop_bbox": [
+        52,
+        45,
+        418,
+        419
+      ],
+      "edge_touch": false,
+      "output_size": [
+        366,
+        374
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/fx/poisoncloud/prop.png"
+    },
+    {
+      "index": 4,
+      "label": "blood",
+      "grid": [
+        1,
+        1
+      ],
+      "source_box": [
+        469,
+        469,
+        938,
+        938
+      ],
+      "component_mode": "all",
+      "component_count": 8,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        23,
+        41,
+        432,
+        420
+      ],
+      "padded_crop_bbox": [
+        15,
+        33,
+        440,
+        428
+      ],
+      "edge_touch": false,
+      "output_size": [
+        425,
+        395
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/fx/blood/prop.png"
+    },
+    {
+      "index": 5,
+      "label": "levelup",
+      "grid": [
+        1,
+        2
+      ],
+      "source_box": [
+        938,
+        469,
+        1407,
+        938
+      ],
+      "component_mode": "all",
+      "component_count": 4,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        41,
+        49,
+        400,
+        431
+      ],
+      "padded_crop_bbox": [
+        33,
+        41,
+        408,
+        439
+      ],
+      "edge_touch": false,
+      "output_size": [
+        375,
+        398
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/fx/levelup/prop.png"
+    },
+    {
+      "index": 6,
+      "label": "missile",
+      "grid": [
+        2,
+        0
+      ],
+      "source_box": [
+        0,
+        938,
+        469,
+        1407
+      ],
+      "component_mode": "all",
+      "component_count": 8,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        72,
+        40,
+        400,
+        367
+      ],
+      "padded_crop_bbox": [
+        64,
+        32,
+        408,
+        375
+      ],
+      "edge_touch": false,
+      "output_size": [
+        344,
+        343
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/fx/missile/prop.png"
+    },
+    {
+      "index": 7,
+      "label": "dust",
+      "grid": [
+        2,
+        1
+      ],
+      "source_box": [
+        469,
+        938,
+        938,
+        1407
+      ],
+      "component_mode": "all",
+      "component_count": 7,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        31,
+        57,
+        415,
+        380
+      ],
+      "padded_crop_bbox": [
+        23,
+        49,
+        423,
+        388
+      ],
+      "edge_touch": false,
+      "output_size": [
+        400,
+        339
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/fx/dust/prop.png"
+    },
+    {
+      "index": 8,
+      "label": "holy",
+      "grid": [
+        2,
+        2
+      ],
+      "source_box": [
+        938,
+        938,
+        1407,
+        1407
+      ],
+      "component_mode": "all",
+      "component_count": 5,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        44,
+        39,
+        403,
+        394
+      ],
+      "padded_crop_bbox": [
+        36,
+        31,
+        411,
+        402
+      ],
+      "edge_touch": false,
+      "output_size": [
+        375,
+        371
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/fx/holy/prop.png"
+    }
+  ],
+  "rejected": [],
+  "edge_touch_props": []
+}

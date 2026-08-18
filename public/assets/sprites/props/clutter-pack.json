@@ -1,0 +1,397 @@
+{
+  "input": "/workspace/assets/props/clutter/raw-sheet.jpg",
+  "rows": 3,
+  "cols": 3,
+  "threshold": 100,
+  "edge_threshold": 150,
+  "component_mode": "largest",
+  "component_padding": 8,
+  "min_component_area": 100,
+  "edge_touch_margin": 0,
+  "accepted": [
+    {
+      "index": 0,
+      "label": "barrel",
+      "grid": [
+        0,
+        0
+      ],
+      "source_box": [
+        0,
+        0,
+        469,
+        469
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 89201,
+      "selected_component_bbox": [
+        104,
+        67,
+        390,
+        428
+      ],
+      "crop_bbox": [
+        104,
+        67,
+        390,
+        428
+      ],
+      "padded_crop_bbox": [
+        96,
+        59,
+        398,
+        436
+      ],
+      "edge_touch": false,
+      "output_size": [
+        302,
+        377
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/barrel/prop.png"
+    },
+    {
+      "index": 1,
+      "label": "crate",
+      "grid": [
+        0,
+        1
+      ],
+      "source_box": [
+        469,
+        0,
+        938,
+        469
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 99965,
+      "selected_component_bbox": [
+        55,
+        80,
+        417,
+        441
+      ],
+      "crop_bbox": [
+        55,
+        80,
+        417,
+        441
+      ],
+      "padded_crop_bbox": [
+        47,
+        72,
+        425,
+        449
+      ],
+      "edge_touch": false,
+      "output_size": [
+        378,
+        377
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/crate/prop.png"
+    },
+    {
+      "index": 2,
+      "label": "pot",
+      "grid": [
+        0,
+        2
+      ],
+      "source_box": [
+        938,
+        0,
+        1407,
+        469
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 72761,
+      "selected_component_bbox": [
+        72,
+        86,
+        356,
+        425
+      ],
+      "crop_bbox": [
+        72,
+        86,
+        356,
+        425
+      ],
+      "padded_crop_bbox": [
+        64,
+        78,
+        364,
+        433
+      ],
+      "edge_touch": false,
+      "output_size": [
+        300,
+        355
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/pot/prop.png"
+    },
+    {
+      "index": 3,
+      "label": "sack",
+      "grid": [
+        1,
+        0
+      ],
+      "source_box": [
+        0,
+        469,
+        469,
+        938
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 72667,
+      "selected_component_bbox": [
+        77,
+        28,
+        399,
+        377
+      ],
+      "crop_bbox": [
+        77,
+        28,
+        399,
+        377
+      ],
+      "padded_crop_bbox": [
+        69,
+        20,
+        407,
+        385
+      ],
+      "edge_touch": false,
+      "output_size": [
+        338,
+        365
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/sack/prop.png"
+    },
+    {
+      "index": 4,
+      "label": "bones",
+      "grid": [
+        1,
+        1
+      ],
+      "source_box": [
+        469,
+        469,
+        938,
+        938
+      ],
+      "component_mode": "largest",
+      "component_count": 5,
+      "selected_component_area": 70686,
+      "selected_component_bbox": [
+        26,
+        63,
+        432,
+        369
+      ],
+      "crop_bbox": [
+        26,
+        63,
+        432,
+        369
+      ],
+      "padded_crop_bbox": [
+        18,
+        55,
+        440,
+        377
+      ],
+      "edge_touch": false,
+      "output_size": [
+        422,
+        322
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/bones/prop.png"
+    },
+    {
+      "index": 5,
+      "label": "skull",
+      "grid": [
+        1,
+        2
+      ],
+      "source_box": [
+        938,
+        469,
+        1407,
+        938
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 65942,
+      "selected_component_bbox": [
+        74,
+        62,
+        353,
+        366
+      ],
+      "crop_bbox": [
+        74,
+        62,
+        353,
+        366
+      ],
+      "padded_crop_bbox": [
+        66,
+        54,
+        361,
+        374
+      ],
+      "edge_touch": false,
+      "output_size": [
+        295,
+        320
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/skull/prop.png"
+    },
+    {
+      "index": 6,
+      "label": "cobweb",
+      "grid": [
+        2,
+        0
+      ],
+      "source_box": [
+        0,
+        938,
+        469,
+        1407
+      ],
+      "component_mode": "largest",
+      "component_count": 2,
+      "selected_component_area": 56304,
+      "selected_component_bbox": [
+        48,
+        0,
+        447,
+        353
+      ],
+      "crop_bbox": [
+        48,
+        0,
+        447,
+        353
+      ],
+      "padded_crop_bbox": [
+        40,
+        0,
+        455,
+        361
+      ],
+      "edge_touch": true,
+      "output_size": [
+        415,
+        361
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/cobweb/prop.png"
+    },
+    {
+      "index": 7,
+      "label": "candle",
+      "grid": [
+        2,
+        1
+      ],
+      "source_box": [
+        469,
+        938,
+        938,
+        1407
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 38556,
+      "selected_component_bbox": [
+        136,
+        0,
+        321,
+        340
+      ],
+      "crop_bbox": [
+        136,
+        0,
+        321,
+        340
+      ],
+      "padded_crop_bbox": [
+        128,
+        0,
+        329,
+        348
+      ],
+      "edge_touch": true,
+      "output_size": [
+        201,
+        348
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/candle/prop.png"
+    },
+    {
+      "index": 8,
+      "label": "chain",
+      "grid": [
+        2,
+        2
+      ],
+      "source_box": [
+        938,
+        938,
+        1407,
+        1407
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 28092,
+      "selected_component_bbox": [
+        87,
+        0,
+        266,
+        359
+      ],
+      "crop_bbox": [
+        87,
+        0,
+        266,
+        359
+      ],
+      "padded_crop_bbox": [
+        79,
+        0,
+        274,
+        367
+      ],
+      "edge_touch": true,
+      "output_size": [
+        195,
+        367
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/sprites/props/chain/prop.png"
+    }
+  ],
+  "rejected": [],
+  "edge_touch_props": [
+    "cobweb",
+    "candle",
+    "chain"
+  ]
+}

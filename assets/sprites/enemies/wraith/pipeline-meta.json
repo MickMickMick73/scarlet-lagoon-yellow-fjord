@@ -1,0 +1,155 @@
+{
+  "target": "creature",
+  "mode": "idle",
+  "prompt": "",
+  "role": "",
+  "input": "/workspace/assets/sprites/enemies/wraith/raw-idle.jpg",
+  "threshold": 100,
+  "edge_threshold": 150,
+  "duration": 200,
+  "rows": 2,
+  "cols": 2,
+  "cell_size": 128,
+  "fit_scale": 0.85,
+  "trim_border": 4,
+  "edge_clean_depth": 3,
+  "align": "feet",
+  "shared_scale": true,
+  "component_mode": "all",
+  "component_padding": 0,
+  "min_component_area": 1,
+  "edge_touch_margin": 0,
+  "frame_labels": [
+    "idle-1",
+    "idle-2",
+    "idle-3",
+    "idle-4"
+  ],
+  "frames": [
+    {
+      "grid": [
+        0,
+        0
+      ],
+      "source_box": [
+        0,
+        0,
+        704,
+        704
+      ],
+      "component_mode": "all",
+      "component_count": 57,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        190,
+        106,
+        522,
+        580
+      ],
+      "edge_touch": false,
+      "output_size": [
+        74,
+        106
+      ],
+      "paste_position": [
+        27,
+        13
+      ]
+    },
+    {
+      "grid": [
+        0,
+        1
+      ],
+      "source_box": [
+        704,
+        0,
+        1408,
+        704
+      ],
+      "component_mode": "all",
+      "component_count": 60,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        178,
+        106,
+        502,
+        588
+      ],
+      "edge_touch": false,
+      "output_size": [
+        72,
+        108
+      ],
+      "paste_position": [
+        28,
+        11
+      ]
+    },
+    {
+      "grid": [
+        1,
+        0
+      ],
+      "source_box": [
+        0,
+        704,
+        704,
+        1408
+      ],
+      "component_mode": "all",
+      "component_count": 42,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        176,
+        105,
+        506,
+        575
+      ],
+      "edge_touch": false,
+      "output_size": [
+        74,
+        105
+      ],
+      "paste_position": [
+        27,
+        14
+      ]
+    },
+    {
+      "grid": [
+        1,
+        1
+      ],
+      "source_box": [
+        704,
+        704,
+        1408,
+        1408
+      ],
+      "component_mode": "all",
+      "component_count": 46,
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "crop_bbox": [
+        174,
+        107,
+        521,
+        590
+      ],
+      "edge_touch": false,
+      "output_size": [
+        78,
+        108
+      ],
+      "paste_position": [
+        25,
+        11
+      ]
+    }
+  ],
+  "edge_touch_frames": []
+}

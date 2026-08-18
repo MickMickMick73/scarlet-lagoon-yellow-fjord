@@ -1,0 +1,396 @@
+{
+  "input": "/workspace/assets/nh/items/raw.jpg",
+  "rows": 3,
+  "cols": 3,
+  "threshold": 100,
+  "edge_threshold": 150,
+  "component_mode": "largest",
+  "component_padding": 8,
+  "min_component_area": 100,
+  "edge_touch_margin": 0,
+  "accepted": [
+    {
+      "index": 0,
+      "label": "pistol",
+      "grid": [
+        0,
+        0
+      ],
+      "source_box": [
+        0,
+        0,
+        469,
+        469
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 52427,
+      "selected_component_bbox": [
+        94,
+        106,
+        418,
+        386
+      ],
+      "crop_bbox": [
+        94,
+        106,
+        418,
+        386
+      ],
+      "padded_crop_bbox": [
+        86,
+        98,
+        426,
+        394
+      ],
+      "edge_touch": false,
+      "output_size": [
+        340,
+        296
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/nh/items/pistol/prop.png"
+    },
+    {
+      "index": 1,
+      "label": "baton",
+      "grid": [
+        0,
+        1
+      ],
+      "source_box": [
+        469,
+        0,
+        938,
+        469
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 19857,
+      "selected_component_bbox": [
+        58,
+        98,
+        395,
+        412
+      ],
+      "crop_bbox": [
+        58,
+        98,
+        395,
+        412
+      ],
+      "padded_crop_bbox": [
+        50,
+        90,
+        403,
+        420
+      ],
+      "edge_touch": false,
+      "output_size": [
+        353,
+        330
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/nh/items/baton/prop.png"
+    },
+    {
+      "index": 2,
+      "label": "credits",
+      "grid": [
+        0,
+        2
+      ],
+      "source_box": [
+        938,
+        0,
+        1407,
+        469
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 64534,
+      "selected_component_bbox": [
+        32,
+        118,
+        362,
+        405
+      ],
+      "crop_bbox": [
+        32,
+        118,
+        362,
+        405
+      ],
+      "padded_crop_bbox": [
+        24,
+        110,
+        370,
+        413
+      ],
+      "edge_touch": false,
+      "output_size": [
+        346,
+        303
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/nh/items/credits/prop.png"
+    },
+    {
+      "index": 3,
+      "label": "nutrapack",
+      "grid": [
+        1,
+        0
+      ],
+      "source_box": [
+        0,
+        469,
+        469,
+        938
+      ],
+      "component_mode": "largest",
+      "component_count": 2,
+      "selected_component_area": 75772,
+      "selected_component_bbox": [
+        123,
+        35,
+        396,
+        358
+      ],
+      "crop_bbox": [
+        123,
+        35,
+        396,
+        358
+      ],
+      "padded_crop_bbox": [
+        115,
+        27,
+        404,
+        366
+      ],
+      "edge_touch": false,
+      "output_size": [
+        289,
+        339
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/nh/items/nutrapack/prop.png"
+    },
+    {
+      "index": 4,
+      "label": "shunt",
+      "grid": [
+        1,
+        1
+      ],
+      "source_box": [
+        469,
+        469,
+        938,
+        938
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 60156,
+      "selected_component_bbox": [
+        54,
+        67,
+        378,
+        347
+      ],
+      "crop_bbox": [
+        54,
+        67,
+        378,
+        347
+      ],
+      "padded_crop_bbox": [
+        46,
+        59,
+        386,
+        355
+      ],
+      "edge_touch": false,
+      "output_size": [
+        340,
+        296
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/nh/items/shunt/prop.png"
+    },
+    {
+      "index": 5,
+      "label": "cryopod",
+      "grid": [
+        1,
+        2
+      ],
+      "source_box": [
+        938,
+        469,
+        1407,
+        938
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 63416,
+      "selected_component_bbox": [
+        86,
+        26,
+        290,
+        371
+      ],
+      "crop_bbox": [
+        86,
+        26,
+        290,
+        371
+      ],
+      "padded_crop_bbox": [
+        78,
+        18,
+        298,
+        379
+      ],
+      "edge_touch": false,
+      "output_size": [
+        220,
+        361
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/nh/items/cryopod/prop.png"
+    },
+    {
+      "index": 6,
+      "label": "stim",
+      "grid": [
+        2,
+        0
+      ],
+      "source_box": [
+        0,
+        938,
+        469,
+        1407
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 33668,
+      "selected_component_bbox": [
+        182,
+        0,
+        306,
+        315
+      ],
+      "crop_bbox": [
+        182,
+        0,
+        306,
+        315
+      ],
+      "padded_crop_bbox": [
+        174,
+        0,
+        314,
+        323
+      ],
+      "edge_touch": true,
+      "output_size": [
+        140,
+        323
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/nh/items/stim/prop.png"
+    },
+    {
+      "index": 7,
+      "label": "coolant",
+      "grid": [
+        2,
+        1
+      ],
+      "source_box": [
+        469,
+        938,
+        938,
+        1407
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 59342,
+      "selected_component_bbox": [
+        101,
+        0,
+        324,
+        318
+      ],
+      "crop_bbox": [
+        101,
+        0,
+        324,
+        318
+      ],
+      "padded_crop_bbox": [
+        93,
+        0,
+        332,
+        326
+      ],
+      "edge_touch": true,
+      "output_size": [
+        239,
+        326
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/nh/items/coolant/prop.png"
+    },
+    {
+      "index": 8,
+      "label": "chip",
+      "grid": [
+        2,
+        2
+      ],
+      "source_box": [
+        938,
+        938,
+        1407,
+        1407
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 77491,
+      "selected_component_bbox": [
+        18,
+        18,
+        349,
+        315
+      ],
+      "crop_bbox": [
+        18,
+        18,
+        349,
+        315
+      ],
+      "padded_crop_bbox": [
+        10,
+        10,
+        357,
+        323
+      ],
+      "edge_touch": false,
+      "output_size": [
+        347,
+        313
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/nh/items/chip/prop.png"
+    }
+  ],
+  "rejected": [],
+  "edge_touch_props": [
+    "stim",
+    "coolant"
+  ]
+}

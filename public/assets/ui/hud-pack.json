@@ -1,0 +1,395 @@
+{
+  "input": "/workspace/assets/ui/raw-sheet.jpg",
+  "rows": 3,
+  "cols": 3,
+  "threshold": 100,
+  "edge_threshold": 150,
+  "component_mode": "largest",
+  "component_padding": 8,
+  "min_component_area": 100,
+  "edge_touch_margin": 0,
+  "accepted": [
+    {
+      "index": 0,
+      "label": "heart",
+      "grid": [
+        0,
+        0
+      ],
+      "source_box": [
+        0,
+        0,
+        469,
+        469
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 53740,
+      "selected_component_bbox": [
+        96,
+        107,
+        388,
+        377
+      ],
+      "crop_bbox": [
+        96,
+        107,
+        388,
+        377
+      ],
+      "padded_crop_bbox": [
+        88,
+        99,
+        396,
+        385
+      ],
+      "edge_touch": false,
+      "output_size": [
+        308,
+        286
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/ui/heart/prop.png"
+    },
+    {
+      "index": 1,
+      "label": "mana",
+      "grid": [
+        0,
+        1
+      ],
+      "source_box": [
+        469,
+        0,
+        938,
+        469
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 58863,
+      "selected_component_bbox": [
+        105,
+        50,
+        349,
+        405
+      ],
+      "crop_bbox": [
+        105,
+        50,
+        349,
+        405
+      ],
+      "padded_crop_bbox": [
+        97,
+        42,
+        357,
+        413
+      ],
+      "edge_touch": false,
+      "output_size": [
+        260,
+        371
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/ui/mana/prop.png"
+    },
+    {
+      "index": 2,
+      "label": "coin",
+      "grid": [
+        0,
+        2
+      ],
+      "source_box": [
+        938,
+        0,
+        1407,
+        469
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 62597,
+      "selected_component_bbox": [
+        71,
+        96,
+        350,
+        381
+      ],
+      "crop_bbox": [
+        71,
+        96,
+        350,
+        381
+      ],
+      "padded_crop_bbox": [
+        63,
+        88,
+        358,
+        389
+      ],
+      "edge_touch": false,
+      "output_size": [
+        295,
+        301
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/ui/coin/prop.png"
+    },
+    {
+      "index": 3,
+      "label": "slot",
+      "grid": [
+        1,
+        0
+      ],
+      "source_box": [
+        0,
+        469,
+        469,
+        938
+      ],
+      "component_mode": "largest",
+      "component_count": 2,
+      "selected_component_area": 106427,
+      "selected_component_bbox": [
+        79,
+        51,
+        405,
+        379
+      ],
+      "crop_bbox": [
+        79,
+        51,
+        405,
+        379
+      ],
+      "padded_crop_bbox": [
+        71,
+        43,
+        413,
+        387
+      ],
+      "edge_touch": false,
+      "output_size": [
+        342,
+        344
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/ui/slot/prop.png"
+    },
+    {
+      "index": 4,
+      "label": "frame",
+      "grid": [
+        1,
+        1
+      ],
+      "source_box": [
+        469,
+        469,
+        938,
+        938
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 58825,
+      "selected_component_bbox": [
+        41,
+        15,
+        417,
+        404
+      ],
+      "crop_bbox": [
+        41,
+        15,
+        417,
+        404
+      ],
+      "padded_crop_bbox": [
+        33,
+        7,
+        425,
+        412
+      ],
+      "edge_touch": false,
+      "output_size": [
+        392,
+        405
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/ui/frame/prop.png"
+    },
+    {
+      "index": 5,
+      "label": "poison",
+      "grid": [
+        1,
+        2
+      ],
+      "source_box": [
+        938,
+        469,
+        1407,
+        938
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 47015,
+      "selected_component_bbox": [
+        102,
+        39,
+        320,
+        377
+      ],
+      "crop_bbox": [
+        102,
+        39,
+        320,
+        377
+      ],
+      "padded_crop_bbox": [
+        94,
+        31,
+        328,
+        385
+      ],
+      "edge_touch": false,
+      "output_size": [
+        234,
+        354
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/ui/poison/prop.png"
+    },
+    {
+      "index": 6,
+      "label": "burn",
+      "grid": [
+        2,
+        0
+      ],
+      "source_box": [
+        0,
+        938,
+        469,
+        1407
+      ],
+      "component_mode": "largest",
+      "component_count": 2,
+      "selected_component_area": 64836,
+      "selected_component_bbox": [
+        96,
+        0,
+        390,
+        380
+      ],
+      "crop_bbox": [
+        96,
+        0,
+        390,
+        380
+      ],
+      "padded_crop_bbox": [
+        88,
+        0,
+        398,
+        388
+      ],
+      "edge_touch": true,
+      "output_size": [
+        310,
+        388
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/ui/burn/prop.png"
+    },
+    {
+      "index": 7,
+      "label": "freeze",
+      "grid": [
+        2,
+        1
+      ],
+      "source_box": [
+        469,
+        938,
+        938,
+        1407
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 60583,
+      "selected_component_bbox": [
+        89,
+        8,
+        350,
+        379
+      ],
+      "crop_bbox": [
+        89,
+        8,
+        350,
+        379
+      ],
+      "padded_crop_bbox": [
+        81,
+        0,
+        358,
+        387
+      ],
+      "edge_touch": false,
+      "output_size": [
+        277,
+        387
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/ui/freeze/prop.png"
+    },
+    {
+      "index": 8,
+      "label": "bleed",
+      "grid": [
+        2,
+        2
+      ],
+      "source_box": [
+        938,
+        938,
+        1407,
+        1407
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 54603,
+      "selected_component_bbox": [
+        94,
+        5,
+        328,
+        374
+      ],
+      "crop_bbox": [
+        94,
+        5,
+        328,
+        374
+      ],
+      "padded_crop_bbox": [
+        86,
+        0,
+        336,
+        382
+      ],
+      "edge_touch": false,
+      "output_size": [
+        250,
+        382
+      ],
+      "status": "accepted",
+      "image": "/workspace/public/assets/ui/bleed/prop.png"
+    }
+  ],
+  "rejected": [],
+  "edge_touch_props": [
+    "burn"
+  ]
+}

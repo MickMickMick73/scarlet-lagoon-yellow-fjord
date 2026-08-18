@@ -1,0 +1,175 @@
+{
+  "target": "player",
+  "mode": "attack",
+  "prompt": "",
+  "role": "",
+  "input": "/workspace/assets/sprites/heroes/cleric-attack/raw.jpg",
+  "threshold": 100,
+  "edge_threshold": 150,
+  "duration": 200,
+  "rows": 2,
+  "cols": 2,
+  "cell_size": 128,
+  "fit_scale": 0.85,
+  "trim_border": 4,
+  "edge_clean_depth": 3,
+  "align": "feet",
+  "shared_scale": true,
+  "component_mode": "largest",
+  "component_padding": 0,
+  "min_component_area": 1,
+  "edge_touch_margin": 0,
+  "frame_labels": [
+    "attack-1",
+    "attack-2",
+    "attack-3",
+    "attack-4"
+  ],
+  "frames": [
+    {
+      "grid": [
+        0,
+        0
+      ],
+      "source_box": [
+        0,
+        0,
+        704,
+        704
+      ],
+      "component_mode": "largest",
+      "component_count": 2,
+      "selected_component_area": 85557,
+      "selected_component_bbox": [
+        130,
+        97,
+        580,
+        573
+      ],
+      "crop_bbox": [
+        130,
+        97,
+        580,
+        573
+      ],
+      "edge_touch": false,
+      "output_size": [
+        94,
+        99
+      ],
+      "paste_position": [
+        17,
+        20
+      ]
+    },
+    {
+      "grid": [
+        0,
+        1
+      ],
+      "source_box": [
+        704,
+        0,
+        1408,
+        704
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 87268,
+      "selected_component_bbox": [
+        79,
+        97,
+        555,
+        582
+      ],
+      "crop_bbox": [
+        79,
+        97,
+        555,
+        582
+      ],
+      "edge_touch": false,
+      "output_size": [
+        99,
+        101
+      ],
+      "paste_position": [
+        14,
+        18
+      ]
+    },
+    {
+      "grid": [
+        1,
+        0
+      ],
+      "source_box": [
+        0,
+        704,
+        704,
+        1408
+      ],
+      "component_mode": "largest",
+      "component_count": 2,
+      "selected_component_area": 88109,
+      "selected_component_bbox": [
+        130,
+        21,
+        587,
+        540
+      ],
+      "crop_bbox": [
+        130,
+        21,
+        587,
+        540
+      ],
+      "edge_touch": false,
+      "output_size": [
+        95,
+        108
+      ],
+      "paste_position": [
+        16,
+        11
+      ]
+    },
+    {
+      "grid": [
+        1,
+        1
+      ],
+      "source_box": [
+        704,
+        704,
+        1408,
+        1408
+      ],
+      "component_mode": "largest",
+      "component_count": 1,
+      "selected_component_area": 88892,
+      "selected_component_bbox": [
+        90,
+        58,
+        534,
+        554
+      ],
+      "crop_bbox": [
+        90,
+        58,
+        534,
+        554
+      ],
+      "edge_touch": false,
+      "output_size": [
+        93,
+        103
+      ],
+      "paste_position": [
+        17,
+        16
+      ]
+    }
+  ],
+  "edge_touch_frames": []
+}

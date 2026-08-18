@@ -1,0 +1,175 @@
+{
+  "target": "player",
+  "mode": "attack",
+  "prompt": "",
+  "role": "",
+  "input": "/workspace/assets/sprites/heroes/knight/raw-attack.jpg",
+  "threshold": 100,
+  "edge_threshold": 150,
+  "duration": 200,
+  "rows": 2,
+  "cols": 2,
+  "cell_size": 128,
+  "fit_scale": 0.85,
+  "trim_border": 4,
+  "edge_clean_depth": 3,
+  "align": "feet",
+  "shared_scale": true,
+  "component_mode": "largest",
+  "component_padding": 0,
+  "min_component_area": 1,
+  "edge_touch_margin": 0,
+  "frame_labels": [
+    "attack-1",
+    "attack-2",
+    "attack-3",
+    "attack-4"
+  ],
+  "frames": [
+    {
+      "grid": [
+        0,
+        0
+      ],
+      "source_box": [
+        0,
+        0,
+        704,
+        704
+      ],
+      "component_mode": "largest",
+      "component_count": 7,
+      "selected_component_area": 103084,
+      "selected_component_bbox": [
+        98,
+        97,
+        642,
+        599
+      ],
+      "crop_bbox": [
+        98,
+        97,
+        642,
+        599
+      ],
+      "edge_touch": false,
+      "output_size": [
+        103,
+        95
+      ],
+      "paste_position": [
+        12,
+        24
+      ]
+    },
+    {
+      "grid": [
+        0,
+        1
+      ],
+      "source_box": [
+        704,
+        0,
+        1408,
+        704
+      ],
+      "component_mode": "largest",
+      "component_count": 4,
+      "selected_component_area": 103686,
+      "selected_component_bbox": [
+        15,
+        110,
+        587,
+        600
+      ],
+      "crop_bbox": [
+        15,
+        110,
+        587,
+        600
+      ],
+      "edge_touch": false,
+      "output_size": [
+        108,
+        93
+      ],
+      "paste_position": [
+        10,
+        26
+      ]
+    },
+    {
+      "grid": [
+        1,
+        0
+      ],
+      "source_box": [
+        0,
+        704,
+        704,
+        1408
+      ],
+      "component_mode": "largest",
+      "component_count": 6,
+      "selected_component_area": 103790,
+      "selected_component_bbox": [
+        110,
+        32,
+        659,
+        539
+      ],
+      "crop_bbox": [
+        110,
+        32,
+        659,
+        539
+      ],
+      "edge_touch": false,
+      "output_size": [
+        104,
+        96
+      ],
+      "paste_position": [
+        12,
+        23
+      ]
+    },
+    {
+      "grid": [
+        1,
+        1
+      ],
+      "source_box": [
+        704,
+        704,
+        1408,
+        1408
+      ],
+      "component_mode": "largest",
+      "component_count": 5,
+      "selected_component_area": 96654,
+      "selected_component_bbox": [
+        175,
+        25,
+        521,
+        544
+      ],
+      "crop_bbox": [
+        175,
+        25,
+        521,
+        544
+      ],
+      "edge_touch": false,
+      "output_size": [
+        65,
+        98
+      ],
+      "paste_position": [
+        31,
+        21
+      ]
+    }
+  ],
+  "edge_touch_frames": []
+}
